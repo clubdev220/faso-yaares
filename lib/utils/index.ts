@@ -68,7 +68,8 @@ export function buildWhatsAppMessage(listing: {
   price: number
   id: string
 }): string {
-  const url = `${process.env.NEXT_PUBLIC_APP_URL}/listings/${listing.id}`
+  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://yaarer.com'
+  const url = `${baseUrl}/listings/${listing.id}`
   return `Bonjour, je suis intéressé(e) par votre annonce "${listing.title}" à ${formatPrice(listing.price)} sur Yaaré.\n${url}`
 }
 

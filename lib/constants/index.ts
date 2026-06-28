@@ -1,6 +1,6 @@
 export const APP_NAME = 'Yaaré'
 export const APP_DESCRIPTION = 'Le marché en ligne du Burkina Faso - Achetez et vendez facilement'
-export const APP_URL = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'
+export const APP_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://yaarer.com'
 
 export const LISTING_PAGE_SIZE = 12
 export const MAX_IMAGES_PER_LISTING = 5
