@@ -3,6 +3,7 @@ const nextConfig = {
   eslint: { ignoreDuringBuilds: true },
   typescript: { ignoreBuildErrors: true },
   images: {
+    unoptimized: true,
     remotePatterns: [
       {
         protocol: 'https',
@@ -13,7 +14,6 @@ const nextConfig = {
         hostname: '**.supabase.co',
       },
     ],
-    formats: ['image/webp', 'image/avif'],
   },
   experimental: {
     optimizePackageImports: ['lucide-react'],

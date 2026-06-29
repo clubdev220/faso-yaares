@@ -35,7 +35,7 @@ export function Header({ user }: HeaderProps) {
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
           <Link href="/" className="flex-shrink-0">
-            <LogoSVG className="h-32" />
+            <LogoSVG className="h-9" />
           </Link>
 
           {/* Desktop Search Bar */}
