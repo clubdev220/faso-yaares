@@ -7,7 +7,7 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
       {/* Header */}
       <header className="px-4 py-4 flex justify-center">
         <Link href="/" className="inline-flex">
-          <LogoSVG />
+          <LogoSVG className="h-20" />
         </Link>
       </header>
 

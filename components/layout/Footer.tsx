@@ -31,7 +31,7 @@ export function Footer() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           <div className="md:col-span-1">
-            <LogoSVG className="h-10 mb-6" />
+            <LogoSVG className="h-[120px] mb-6" />
             <p className="text-sm text-gray-400 leading-relaxed">
               Le marché en ligne du Burkina Faso. Achetez et vendez facilement près de chez vous.
             </p>
