@@ -1,0 +1,1436 @@
+<title>Yaaré — Kit Réseaux Sociaux</title>
+<style>
+  :root {
+    --green: #009B4D;
+    --green-deep: #005F2F;
+    --green-dark: #003D1E;
+    --green-light: #C0EBD4;
+    --green-pale: #E6F7EE;
+    --gold: #FCD116;
+    --gold-warm: #E0B400;
+    --gold-pale: #FFF8DC;
+    --red: #EF2B2D;
+    --red-soft: #F79799;
+    --sand: #FEF9E7;
+    --cream: #FFFDF5;
+    --charcoal: #1A1F1C;
+    --slate: #3A4A3F;
+    --muted: #6B7D72;
+    --surface: #FAFAF8;
+    --page-bg: #F2F0EB;
+    --card-shadow: 0 2px 20px rgba(0,0,0,0.08);
+    --text-primary: #1A1F1C;
+    --text-secondary: #4A5A4F;
+    --border: #E0DDD6;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --page-bg: #111513;
+      --surface: #1A1F1C;
+      --text-primary: #E8EAE9;
+      --text-secondary: #98A49C;
+      --border: #2A322D;
+      --card-shadow: 0 2px 20px rgba(0,0,0,0.3);
+    }
+  }
+  :root[data-theme="dark"] {
+    --page-bg: #111513;
+    --surface: #1A1F1C;
+    --text-primary: #E8EAE9;
+    --text-secondary: #98A49C;
+    --border: #2A322D;
+    --card-shadow: 0 2px 20px rgba(0,0,0,0.3);
+  }
+  :root[data-theme="light"] {
+    --page-bg: #F2F0EB;
+    --surface: #FAFAF8;
+    --text-primary: #1A1F1C;
+    --text-secondary: #4A5A4F;
+    --border: #E0DDD6;
+    --card-shadow: 0 2px 20px rgba(0,0,0,0.08);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--page-bg);
+    color: var(--text-primary);
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .page-header {
+    padding: 3rem 1.5rem 1rem;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  .page-header h1 {
+    font-size: 1.75rem;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    color: var(--text-primary);
+  }
+  .page-header p {
+    color: var(--text-secondary);
+    margin-top: 0.4rem;
+    font-size: 0.95rem;
+  }
+
+  .section-label {
+    max-width: 1200px;
+    margin: 2.5rem auto 1rem;
+    padding: 0 1.5rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted);
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+  .section-label::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  .gallery {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 1.5rem 2rem;
+    display: grid;
+    gap: 1.5rem;
+  }
+  .gallery--square { grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); }
+  .gallery--story { grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); }
+  .gallery--wide { grid-template-columns: 1fr; max-width: 900px; }
+
+  .post-wrapper {
+    background: var(--surface);
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: var(--card-shadow);
+    border: 1px solid var(--border);
+  }
+  .post-meta {
+    padding: 0.75rem 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-top: 1px solid var(--border);
+  }
+  .post-meta .platform {
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  .post-meta .dimensions {
+    font-size: 0.65rem;
+    color: var(--muted);
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* ============================================
+     INDIVIDUAL POST CANVASES
+     ============================================ */
+
+  .post {
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+  .post--square { aspect-ratio: 1 / 1; }
+  .post--story { aspect-ratio: 9 / 16; }
+  .post--fb-cover { aspect-ratio: 820 / 312; }
+  .post--fb-post { aspect-ratio: 1200 / 630; }
+
+  /* --- POST 1: Brand Awareness (Instagram square) --- */
+  .post-brand {
+    background: linear-gradient(145deg, var(--green) 0%, var(--green-deep) 100%);
+    padding: 12%;
+    text-align: center;
+    justify-content: space-between;
+  }
+  .post-brand .woven-bg {
+    position: absolute;
+    inset: 0;
+    opacity: 0.06;
+    background-image:
+      repeating-linear-gradient(0deg, transparent, transparent 18px, rgba(255,255,255,0.5) 18px, rgba(255,255,255,0.5) 20px),
+      repeating-linear-gradient(90deg, transparent, transparent 18px, rgba(255,255,255,0.5) 18px, rgba(255,255,255,0.5) 20px),
+      repeating-linear-gradient(45deg, transparent, transparent 24px, rgba(252,209,22,0.4) 24px, rgba(252,209,22,0.4) 26px);
+  }
+  .post-brand .logo-area {
+    position: relative;
+    z-index: 1;
+  }
+  .post-brand .logo-text {
+    font-size: 3.5rem;
+    font-weight: 800;
+    color: #fff;
+    letter-spacing: -0.02em;
+    line-height: 1;
+  }
+  .post-brand .logo-accent {
+    color: var(--gold);
+  }
+  .post-brand .tagline {
+    position: relative;
+    z-index: 1;
+    color: rgba(255,255,255,0.95);
+    font-size: 1.4rem;
+    font-weight: 600;
+    line-height: 1.35;
+    text-wrap: balance;
+  }
+  .post-brand .tagline em {
+    font-style: normal;
+    color: var(--gold);
+  }
+  .post-brand .bottom-bar {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    background: rgba(0,0,0,0.2);
+    padding: 0.65rem 1.25rem;
+    border-radius: 100px;
+  }
+  .post-brand .bottom-bar span {
+    color: rgba(255,255,255,0.9);
+    font-size: 0.8rem;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+  }
+  .post-brand .dot {
+    width: 4px; height: 4px;
+    border-radius: 50%;
+    background: var(--gold);
+  }
+
+  /* --- POST 2: Gratuit (Instagram square) --- */
+  .post-gratuit {
+    background: var(--cream);
+    padding: 10%;
+    text-align: center;
+    justify-content: center;
+    gap: 8%;
+  }
+  .post-gratuit .big-tag {
+    position: relative;
+    z-index: 1;
+  }
+  .post-gratuit .big-tag .price-cross {
+    font-size: 2rem;
+    color: #ccc;
+    text-decoration: line-through;
+    text-decoration-color: var(--red);
+    text-decoration-thickness: 3px;
+    font-weight: 700;
+    display: block;
+    margin-bottom: 0.5rem;
+  }
+  .post-gratuit .big-tag .free {
+    font-size: 4rem;
+    font-weight: 900;
+    color: var(--green);
+    letter-spacing: -0.03em;
+    line-height: 1;
+    display: block;
+  }
+  .post-gratuit .features {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+    align-items: center;
+  }
+  .post-gratuit .feat {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.95rem;
+    color: var(--slate);
+    font-weight: 500;
+  }
+  .post-gratuit .feat .check {
+    width: 22px; height: 22px;
+    background: var(--green);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-size: 0.7rem;
+    flex-shrink: 0;
+  }
+  .post-gratuit .cta-pill {
+    position: relative;
+    z-index: 1;
+    background: var(--green);
+    color: #fff;
+    padding: 0.75rem 2rem;
+    border-radius: 100px;
+    font-size: 1rem;
+    font-weight: 700;
+    letter-spacing: 0.01em;
+  }
+  .post-gratuit .corner-deco {
+    position: absolute;
+    width: 120px; height: 120px;
+    border-radius: 50%;
+    opacity: 0.08;
+  }
+  .post-gratuit .corner-deco--tl {
+    top: -40px; left: -40px;
+    background: var(--green);
+  }
+  .post-gratuit .corner-deco--br {
+    bottom: -40px; right: -40px;
+    background: var(--gold);
+  }
+
+  /* --- POST 3: Catégories (Instagram square) --- */
+  .post-categories {
+    background: #fff;
+    padding: 8%;
+    display: grid;
+    grid-template-rows: auto 1fr auto;
+    gap: 0;
+  }
+  .post-categories .head {
+    text-align: center;
+    margin-bottom: 6%;
+  }
+  .post-categories .head h2 {
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: var(--charcoal);
+    letter-spacing: -0.01em;
+  }
+  .post-categories .head .underline-gold {
+    display: inline-block;
+    width: 40px; height: 3px;
+    background: var(--gold);
+    border-radius: 2px;
+    margin-top: 0.4rem;
+  }
+  .post-categories .cat-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 4%;
+    align-content: center;
+  }
+  .post-categories .cat-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.4rem;
+  }
+  .post-categories .cat-icon {
+    width: 56px; height: 56px;
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+  }
+  .post-categories .cat-name {
+    font-size: 0.65rem;
+    font-weight: 600;
+    color: var(--slate);
+    text-align: center;
+    line-height: 1.2;
+  }
+  .post-categories .foot {
+    text-align: center;
+    margin-top: 5%;
+  }
+  .post-categories .foot .brand-sm {
+    font-size: 1.1rem;
+    font-weight: 800;
+    color: var(--green);
+  }
+  .post-categories .foot .brand-sm .acc { color: var(--gold); }
+
+  /* --- POST 4: Comment ça marche (Story 9:16) --- */
+  .post-howto {
+    background: linear-gradient(170deg, var(--green-deep) 0%, var(--green-dark) 100%);
+    padding: 10% 8%;
+    justify-content: space-between;
+    text-align: center;
+  }
+  .post-howto .howto-title {
+    color: #fff;
+    font-size: 1.6rem;
+    font-weight: 800;
+    line-height: 1.2;
+    position: relative;
+    z-index: 1;
+  }
+  .post-howto .howto-title span { color: var(--gold); }
+  .post-howto .steps {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+    text-align: left;
+    width: 100%;
+  }
+  .post-howto .step {
+    display: flex;
+    gap: 0.85rem;
+    align-items: flex-start;
+  }
+  .post-howto .step-num {
+    width: 36px; height: 36px;
+    border-radius: 50%;
+    background: var(--gold);
+    color: var(--green-dark);
+    font-weight: 800;
+    font-size: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .post-howto .step-content h3 {
+    color: #fff;
+    font-size: 1rem;
+    font-weight: 700;
+    line-height: 1.3;
+  }
+  .post-howto .step-content p {
+    color: rgba(255,255,255,0.65);
+    font-size: 0.78rem;
+    margin-top: 0.15rem;
+    line-height: 1.4;
+  }
+  .post-howto .line-connector {
+    width: 2px;
+    height: 1.25rem;
+    background: rgba(252,209,22,0.3);
+    margin-left: 17px;
+  }
+  .post-howto .bottom-cta {
+    position: relative;
+    z-index: 1;
+    background: var(--gold);
+    color: var(--green-dark);
+    font-weight: 800;
+    font-size: 0.95rem;
+    padding: 0.85rem 2rem;
+    border-radius: 100px;
+    letter-spacing: 0.01em;
+  }
+  .post-howto .glow {
+    position: absolute;
+    width: 200px; height: 200px;
+    border-radius: 50%;
+    background: var(--gold);
+    opacity: 0.04;
+    top: 15%;
+    right: -60px;
+  }
+
+  /* --- POST 5: Vendeur CTA (Facebook post 1200x630) --- */
+  .post-vendeur {
+    background: linear-gradient(135deg, var(--sand) 0%, #fff 50%, var(--green-pale) 100%);
+    padding: 6% 8%;
+    display: grid;
+    grid-template-columns: 1.2fr 1fr;
+    gap: 6%;
+    align-items: center;
+  }
+  .post-vendeur .left h2 {
+    font-size: 1.75rem;
+    font-weight: 800;
+    color: var(--charcoal);
+    letter-spacing: -0.02em;
+    line-height: 1.2;
+    text-wrap: balance;
+  }
+  .post-vendeur .left h2 .hl {
+    color: var(--green);
+  }
+  .post-vendeur .left p {
+    color: var(--muted);
+    font-size: 0.85rem;
+    margin-top: 0.6rem;
+    line-height: 1.5;
+  }
+  .post-vendeur .left .btn-row {
+    display: flex;
+    gap: 0.75rem;
+    margin-top: 1.25rem;
+    flex-wrap: wrap;
+  }
+  .post-vendeur .left .btn-primary {
+    background: var(--green);
+    color: #fff;
+    padding: 0.6rem 1.4rem;
+    border-radius: 8px;
+    font-size: 0.8rem;
+    font-weight: 700;
+  }
+  .post-vendeur .left .btn-ghost {
+    border: 2px solid var(--green);
+    color: var(--green);
+    padding: 0.6rem 1.4rem;
+    border-radius: 8px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    background: transparent;
+  }
+  .post-vendeur .phone-mockup {
+    background: var(--charcoal);
+    border-radius: 24px;
+    padding: 8px;
+    box-shadow: 0 12px 40px rgba(0,0,0,0.15);
+    max-width: 180px;
+    justify-self: center;
+  }
+  .post-vendeur .phone-screen {
+    background: #fff;
+    border-radius: 18px;
+    overflow: hidden;
+    aspect-ratio: 9/16;
+    display: flex;
+    flex-direction: column;
+  }
+  .post-vendeur .phone-header {
+    background: var(--green);
+    padding: 10px 12px 8px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .post-vendeur .phone-header .ph-logo {
+    font-size: 0.7rem;
+    font-weight: 800;
+    color: #fff;
+  }
+  .post-vendeur .phone-header .ph-logo .pa { color: var(--gold); }
+  .post-vendeur .phone-search {
+    margin: 6px 8px;
+    background: #f3f3f3;
+    border-radius: 6px;
+    padding: 5px 8px;
+    font-size: 0.45rem;
+    color: #aaa;
+  }
+  .post-vendeur .phone-cards {
+    padding: 6px 8px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 5px;
+    flex: 1;
+  }
+  .post-vendeur .ph-card {
+    background: #f8f8f8;
+    border-radius: 6px;
+    overflow: hidden;
+  }
+  .post-vendeur .ph-card-img {
+    aspect-ratio: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+  }
+  .post-vendeur .ph-card-info {
+    padding: 3px 5px 4px;
+  }
+  .post-vendeur .ph-card-info .ph-title {
+    font-size: 0.35rem;
+    font-weight: 600;
+    color: var(--charcoal);
+  }
+  .post-vendeur .ph-card-info .ph-price {
+    font-size: 0.35rem;
+    font-weight: 700;
+    color: var(--green);
+  }
+
+  /* --- POST 6: Facebook Cover --- */
+  .post-cover {
+    background: linear-gradient(100deg, var(--green) 0%, var(--green-deep) 60%, var(--green-dark) 100%);
+    padding: 0 6%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .post-cover .cover-left {
+    position: relative;
+    z-index: 1;
+  }
+  .post-cover .cover-logo {
+    font-size: 2.2rem;
+    font-weight: 800;
+    color: #fff;
+    letter-spacing: -0.02em;
+    line-height: 1;
+  }
+  .post-cover .cover-logo .ca { color: var(--gold); }
+  .post-cover .cover-sub {
+    color: rgba(255,255,255,0.75);
+    font-size: 0.75rem;
+    font-weight: 500;
+    margin-top: 0.3rem;
+    letter-spacing: 0.03em;
+  }
+  .post-cover .cover-right {
+    display: flex;
+    gap: 1.5rem;
+    position: relative;
+    z-index: 1;
+  }
+  .post-cover .cover-stat {
+    text-align: center;
+  }
+  .post-cover .cover-stat .num {
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: var(--gold);
+    line-height: 1;
+  }
+  .post-cover .cover-stat .label {
+    font-size: 0.55rem;
+    color: rgba(255,255,255,0.65);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    font-weight: 600;
+    margin-top: 0.2rem;
+  }
+  .post-cover .cover-weave {
+    position: absolute;
+    inset: 0;
+    opacity: 0.04;
+    background-image:
+      repeating-linear-gradient(60deg, transparent, transparent 14px, rgba(255,255,255,0.6) 14px, rgba(255,255,255,0.6) 16px),
+      repeating-linear-gradient(-60deg, transparent, transparent 14px, rgba(255,255,255,0.6) 14px, rgba(255,255,255,0.6) 16px);
+  }
+
+  /* --- POST 7: WhatsApp / Contact (Story) --- */
+  .post-whatsapp {
+    background: linear-gradient(170deg, #075E54 0%, #054C44 100%);
+    padding: 10% 8%;
+    text-align: center;
+    justify-content: space-between;
+  }
+  .post-whatsapp .wa-top {
+    position: relative; z-index: 1;
+  }
+  .post-whatsapp .wa-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    background: rgba(255,255,255,0.12);
+    padding: 0.4rem 1rem;
+    border-radius: 100px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: rgba(255,255,255,0.85);
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+  .post-whatsapp .wa-title {
+    color: #fff;
+    font-size: 1.8rem;
+    font-weight: 800;
+    line-height: 1.2;
+    margin-top: 1.5rem;
+    text-wrap: balance;
+  }
+  .post-whatsapp .wa-title span { color: #25D366; }
+  .post-whatsapp .wa-chat {
+    position: relative; z-index: 1;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  .post-whatsapp .bubble {
+    max-width: 80%;
+    padding: 0.65rem 0.85rem;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    line-height: 1.4;
+    position: relative;
+  }
+  .post-whatsapp .bubble--them {
+    background: #1A3A34;
+    color: rgba(255,255,255,0.9);
+    align-self: flex-start;
+    border-bottom-left-radius: 4px;
+  }
+  .post-whatsapp .bubble--me {
+    background: #005C4B;
+    color: rgba(255,255,255,0.95);
+    align-self: flex-end;
+    border-bottom-right-radius: 4px;
+  }
+  .post-whatsapp .bubble .time {
+    font-size: 0.5rem;
+    color: rgba(255,255,255,0.4);
+    margin-top: 0.2rem;
+    text-align: right;
+  }
+  .post-whatsapp .wa-footer {
+    position: relative; z-index: 1;
+  }
+  .post-whatsapp .wa-footer .brand-tag {
+    font-size: 1.2rem;
+    font-weight: 800;
+    color: #fff;
+  }
+  .post-whatsapp .wa-footer .brand-tag span { color: var(--gold); }
+  .post-whatsapp .wa-footer .url {
+    font-size: 0.7rem;
+    color: rgba(255,255,255,0.5);
+    margin-top: 0.2rem;
+  }
+
+  /* --- POST 8: Promo Téléphones (Instagram square) --- */
+  .post-promo {
+    background: var(--charcoal);
+    padding: 10%;
+    text-align: center;
+    justify-content: space-between;
+    position: relative;
+  }
+  .post-promo .promo-badge {
+    position: relative; z-index: 1;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    background: var(--red);
+    color: #fff;
+    padding: 0.35rem 0.9rem;
+    border-radius: 4px;
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+  .post-promo .promo-hero {
+    position: relative; z-index: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+  }
+  .post-promo .promo-emoji {
+    font-size: 4rem;
+    filter: drop-shadow(0 8px 20px rgba(0,0,0,0.3));
+  }
+  .post-promo .promo-title {
+    font-size: 1.6rem;
+    font-weight: 800;
+    color: #fff;
+    line-height: 1.2;
+    letter-spacing: -0.01em;
+  }
+  .post-promo .promo-title .hl { color: var(--gold); }
+  .post-promo .promo-sub {
+    color: rgba(255,255,255,0.55);
+    font-size: 0.85rem;
+    line-height: 1.5;
+  }
+  .post-promo .promo-bottom {
+    position: relative; z-index: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+  }
+  .post-promo .promo-cta {
+    background: var(--gold);
+    color: var(--charcoal);
+    padding: 0.65rem 1.5rem;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    font-weight: 700;
+  }
+  .post-promo .promo-brand {
+    font-size: 1rem;
+    font-weight: 800;
+    color: var(--green);
+  }
+  .post-promo .promo-brand span { color: var(--gold); }
+  .post-promo .radial-deco {
+    position: absolute;
+    width: 300px; height: 300px;
+    border-radius: 50%;
+    background: radial-gradient(circle, var(--green) 0%, transparent 70%);
+    opacity: 0.08;
+    top: 30%; left: 50%;
+    transform: translateX(-50%);
+  }
+
+  /* --- POST 9: Témoignage (Story) --- */
+  .post-temoignage {
+    background: linear-gradient(170deg, var(--gold-pale) 0%, #fff 40%, var(--green-pale) 100%);
+    padding: 10% 8%;
+    text-align: center;
+    justify-content: space-between;
+  }
+  .post-temoignage .temo-top {
+    position: relative; z-index: 1;
+  }
+  .post-temoignage .temo-quote-mark {
+    font-size: 3rem;
+    line-height: 1;
+    color: var(--green);
+    opacity: 0.25;
+    font-weight: 900;
+  }
+  .post-temoignage .temo-quote {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--charcoal);
+    line-height: 1.4;
+    font-style: italic;
+    margin-top: 0.5rem;
+    text-wrap: balance;
+  }
+  .post-temoignage .temo-author {
+    margin-top: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.3rem;
+  }
+  .post-temoignage .temo-avatar {
+    width: 48px; height: 48px;
+    border-radius: 50%;
+    background: var(--green);
+    color: #fff;
+    font-weight: 700;
+    font-size: 1.1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .post-temoignage .temo-name {
+    font-weight: 700;
+    font-size: 0.85rem;
+    color: var(--charcoal);
+  }
+  .post-temoignage .temo-city {
+    font-size: 0.7rem;
+    color: var(--muted);
+  }
+  .post-temoignage .temo-stats {
+    position: relative; z-index: 1;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.75rem;
+  }
+  .post-temoignage .temo-stat {
+    background: rgba(0,155,77,0.06);
+    border: 1px solid rgba(0,155,77,0.12);
+    border-radius: 12px;
+    padding: 0.85rem 0.5rem;
+    text-align: center;
+  }
+  .post-temoignage .temo-stat .val {
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: var(--green);
+    line-height: 1;
+  }
+  .post-temoignage .temo-stat .desc {
+    font-size: 0.6rem;
+    color: var(--muted);
+    margin-top: 0.25rem;
+    font-weight: 500;
+  }
+  .post-temoignage .temo-footer {
+    position: relative; z-index: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.4rem;
+  }
+  .post-temoignage .temo-footer .cta {
+    background: var(--green);
+    color: #fff;
+    padding: 0.7rem 1.8rem;
+    border-radius: 100px;
+    font-size: 0.85rem;
+    font-weight: 700;
+  }
+  .post-temoignage .temo-footer .url {
+    font-size: 0.65rem;
+    color: var(--muted);
+  }
+
+  /* Caption block */
+  .caption-block {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.25rem 1.5rem;
+    max-width: 1200px;
+    margin: 0 auto 1.5rem;
+  }
+  .caption-block:last-of-type {
+    margin-bottom: 3rem;
+  }
+  .caption-block h3 {
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 0.6rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .caption-block h3 .tag {
+    font-size: 0.6rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    padding: 0.15rem 0.5rem;
+    border-radius: 4px;
+    color: #fff;
+  }
+  .caption-block h3 .tag--fb { background: #1877F2; }
+  .caption-block h3 .tag--ig { background: linear-gradient(45deg, #F58529, #DD2A7B, #8134AF); }
+  .caption-block h3 .tag--tk { background: #000; }
+  .caption-block pre {
+    font-family: inherit;
+    font-size: 0.82rem;
+    color: var(--text-secondary);
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    line-height: 1.6;
+  }
+
+  /* Footer */
+  .kit-footer {
+    max-width: 1200px;
+    margin: 1rem auto 3rem;
+    padding: 0 1.5rem;
+    text-align: center;
+    font-size: 0.75rem;
+    color: var(--muted);
+  }
+
+  @media (max-width: 640px) {
+    .gallery--square { grid-template-columns: 1fr; }
+    .gallery--story { grid-template-columns: 1fr; max-width: 360px; margin-left: auto; margin-right: auto; }
+    .post-vendeur { grid-template-columns: 1fr; }
+    .post-vendeur .phone-mockup { display: none; }
+  }
+</style>
+
+<div class="page-header">
+  <h1>Kit Réseaux Sociaux — Yaaré</h1>
+  <p>Contenus prêts à publier pour Facebook, Instagram et TikTok. Chaque visuel est accompagné de sa légende.</p>
+</div>
+
+<!-- ===== POSTS CARRÉS (Instagram / Facebook Feed) ===== -->
+<div class="section-label">Posts carrés — Instagram &amp; Facebook (1080 &times; 1080)</div>
+
+<div class="gallery gallery--square">
+
+  <!-- POST 1: Brand Awareness -->
+  <div class="post-wrapper">
+    <div class="post post--square post-brand">
+      <div class="woven-bg"></div>
+      <div class="logo-area">
+        <div class="logo-text">Yaar<span class="logo-accent">é</span></div>
+      </div>
+      <div class="tagline">
+        Le march<em>é</em> en ligne<br>du <em>Burkina Faso</em>
+      </div>
+      <div class="bottom-bar">
+        <span>Achetez</span>
+        <div class="dot"></div>
+        <span>Vendez</span>
+        <div class="dot"></div>
+        <span>Gratuitement</span>
+      </div>
+    </div>
+    <div class="post-meta">
+      <span class="platform">Notoriété de marque</span>
+      <span class="dimensions">1080 &times; 1080</span>
+    </div>
+  </div>
+
+  <!-- POST 2: 100% Gratuit -->
+  <div class="post-wrapper">
+    <div class="post post--square post-gratuit">
+      <div class="corner-deco corner-deco--tl"></div>
+      <div class="corner-deco corner-deco--br"></div>
+      <div class="big-tag">
+        <span class="price-cross">5 000 FCFA</span>
+        <span class="free">GRATUIT</span>
+      </div>
+      <div class="features">
+        <div class="feat"><div class="check">&#10003;</div> Publiez vos annonces sans frais</div>
+        <div class="feat"><div class="check">&#10003;</div> Contactez les vendeurs via WhatsApp</div>
+        <div class="feat"><div class="check">&#10003;</div> En moins de 2 minutes</div>
+      </div>
+      <div class="cta-pill">Commencez sur yaarer.com</div>
+    </div>
+    <div class="post-meta">
+      <span class="platform">Proposition de valeur</span>
+      <span class="dimensions">1080 &times; 1080</span>
+    </div>
+  </div>
+
+  <!-- POST 3: Catégories -->
+  <div class="post-wrapper">
+    <div class="post post--square post-categories">
+      <div class="head">
+        <h2>Trouvez tout sur Yaaré</h2>
+        <div class="underline-gold"></div>
+      </div>
+      <div class="cat-grid">
+        <div class="cat-item">
+          <div class="cat-icon" style="background:#E8F5E9">🚗</div>
+          <div class="cat-name">Véhicules</div>
+        </div>
+        <div class="cat-item">
+          <div class="cat-icon" style="background:#E3F2FD">🏠</div>
+          <div class="cat-name">Immobilier</div>
+        </div>
+        <div class="cat-item">
+          <div class="cat-icon" style="background:#FFF3E0">📱</div>
+          <div class="cat-name">Téléphones</div>
+        </div>
+        <div class="cat-item">
+          <div class="cat-icon" style="background:#F3E5F5">💻</div>
+          <div class="cat-name">Électronique</div>
+        </div>
+        <div class="cat-item">
+          <div class="cat-icon" style="background:#FCE4EC">👗</div>
+          <div class="cat-name">Mode</div>
+        </div>
+        <div class="cat-item">
+          <div class="cat-icon" style="background:#FFF8E1">🌾</div>
+          <div class="cat-name">Produits locaux</div>
+        </div>
+        <div class="cat-item">
+          <div class="cat-icon" style="background:#E0F7FA">⚽</div>
+          <div class="cat-name">Sports &amp; Loisirs</div>
+        </div>
+        <div class="cat-item">
+          <div class="cat-icon" style="background:#EFEBE9">🏡</div>
+          <div class="cat-name">Maison</div>
+        </div>
+        <div class="cat-item">
+          <div class="cat-icon" style="background:#E8EAF6">💼</div>
+          <div class="cat-name">Emplois</div>
+        </div>
+      </div>
+      <div class="foot">
+        <div class="brand-sm">Yaar<span class="acc">é</span></div>
+      </div>
+    </div>
+    <div class="post-meta">
+      <span class="platform">Catégories</span>
+      <span class="dimensions">1080 &times; 1080</span>
+    </div>
+  </div>
+
+  <!-- POST 8: Promo Téléphones -->
+  <div class="post-wrapper">
+    <div class="post post--square post-promo">
+      <div class="radial-deco"></div>
+      <div class="promo-badge">Nouveaux arrivages</div>
+      <div class="promo-hero">
+        <div class="promo-emoji">📱</div>
+        <div class="promo-title">
+          Téléphones<br>à <span class="hl">petits prix</span>
+        </div>
+        <div class="promo-sub">
+          iPhone, Samsung, Tecno, Infinix…<br>
+          Des centaines d'offres vérifiées
+        </div>
+      </div>
+      <div class="promo-bottom">
+        <div class="promo-cta">Voir les offres</div>
+        <div class="promo-brand">Yaar<span>é</span></div>
+      </div>
+    </div>
+    <div class="post-meta">
+      <span class="platform">Promo catégorie</span>
+      <span class="dimensions">1080 &times; 1080</span>
+    </div>
+  </div>
+
+</div>
+
+<!-- Captions for square posts -->
+<div style="max-width:1200px;margin:0 auto;padding:0 1.5rem">
+  <div class="section-label" style="margin:0 0 1rem;padding:0">Légendes des posts carrés</div>
+</div>
+
+<div class="caption-block" style="margin-left:auto;margin-right:auto;max-width:1200px;padding-left:1.5rem;padding-right:1.5rem">
+  <h3><span class="tag tag--ig">Instagram</span> <span class="tag tag--fb">Facebook</span> Post notoriété</h3>
+  <pre>🟢 Yaaré, le marché en ligne du Burkina Faso !
+
+Achetez et vendez près de chez vous — véhicules, téléphones, immobilier, mode et plus encore.
+
+✅ 100% gratuit
+✅ Publication en 2 minutes
+✅ Contact direct via WhatsApp
+
+👉 Rejoignez-nous : yaarer.com
+
+#Yaaré #BurkinaFaso #Ouagadougou #Bobo #VenteEnLigne #AchatVente #MarchéEnLigne #Faso #226</pre>
+</div>
+
+<div class="caption-block" style="margin-left:auto;margin-right:auto;max-width:1200px;padding-left:1.5rem;padding-right:1.5rem">
+  <h3><span class="tag tag--ig">Instagram</span> <span class="tag tag--fb">Facebook</span> Post gratuit</h3>
+  <pre>💰 Combien coûte Yaaré ? RIEN.
+
+Publiez vos annonces gratuitement. Pas de frais cachés, pas d'abonnement.
+
+📸 Ajoutez vos photos
+📝 Décrivez votre article
+📲 Recevez des contacts WhatsApp
+
+C'est aussi simple que ça.
+
+👉 yaarer.com
+
+#Gratuit #PetitesAnnonces #BurkinaFaso #Ouaga #Bobo #VenteGratuite #Yaaré</pre>
+</div>
+
+<div class="caption-block" style="margin-left:auto;margin-right:auto;max-width:1200px;padding-left:1.5rem;padding-right:1.5rem">
+  <h3><span class="tag tag--ig">Instagram</span> <span class="tag tag--fb">Facebook</span> <span class="tag tag--tk">TikTok</span> Promo téléphones</h3>
+  <pre>📱 Nouveaux arrivages téléphones sur Yaaré !
+
+iPhone, Samsung, Tecno, Infinix… trouvez le téléphone qu'il vous faut à prix Ouaga.
+
+Des centaines d'offres vérifiées. Contact vendeur direct via WhatsApp.
+
+👉 yaarer.com
+
+#Téléphones #iPhone #Samsung #Tecno #BurkinaFaso #Ouagadougou #BonPlan #Yaaré</pre>
+</div>
+
+<!-- ===== STORIES / REELS / TIKTOK (9:16) ===== -->
+<div class="section-label">Stories &amp; Reels — Instagram, Facebook, TikTok (1080 &times; 1920)</div>
+
+<div class="gallery gallery--story">
+
+  <!-- POST 4: Comment ça marche -->
+  <div class="post-wrapper">
+    <div class="post post--story post-howto">
+      <div class="glow"></div>
+      <div class="howto-title">Comment vendre<br>sur <span>Yaaré</span> ?</div>
+      <div class="steps">
+        <div class="step">
+          <div class="step-num">1</div>
+          <div class="step-content">
+            <h3>Créez votre compte</h3>
+            <p>Inscrivez-vous avec votre numéro de téléphone en 30 secondes</p>
+          </div>
+        </div>
+        <div class="line-connector"></div>
+        <div class="step">
+          <div class="step-num">2</div>
+          <div class="step-content">
+            <h3>Publiez votre annonce</h3>
+            <p>Ajoutez photos, description et prix — c'est gratuit</p>
+          </div>
+        </div>
+        <div class="line-connector"></div>
+        <div class="step">
+          <div class="step-num">3</div>
+          <div class="step-content">
+            <h3>Recevez des contacts</h3>
+            <p>Les acheteurs vous contactent directement sur WhatsApp</p>
+          </div>
+        </div>
+        <div class="line-connector"></div>
+        <div class="step">
+          <div class="step-num">4</div>
+          <div class="step-content">
+            <h3>Vendez !</h3>
+            <p>Rencontrez l'acheteur et concluez la vente</p>
+          </div>
+        </div>
+      </div>
+      <div class="bottom-cta">Commencez maintenant →</div>
+    </div>
+    <div class="post-meta">
+      <span class="platform">Tutoriel</span>
+      <span class="dimensions">1080 &times; 1920</span>
+    </div>
+  </div>
+
+  <!-- POST 7: WhatsApp Contact -->
+  <div class="post-wrapper">
+    <div class="post post--story post-whatsapp">
+      <div class="wa-top">
+        <div class="wa-badge">💬 Fonctionnalité</div>
+        <div class="wa-title">
+          Contactez les vendeurs<br>via <span>WhatsApp</span>
+        </div>
+      </div>
+      <div class="wa-chat">
+        <div class="bubble bubble--them">
+          Bonjour, votre iPhone 13 est toujours disponible ?
+          <div class="time">14:02</div>
+        </div>
+        <div class="bubble bubble--me">
+          Oui ! Il est en très bon état. Vous êtes à Ouaga ?
+          <div class="time">14:03</div>
+        </div>
+        <div class="bubble bubble--them">
+          Oui, je suis à Ouaga 2000. On peut se voir demain ?
+          <div class="time">14:04</div>
+        </div>
+        <div class="bubble bubble--me">
+          Parfait, je vous envoie ma localisation 📍
+          <div class="time">14:05</div>
+        </div>
+      </div>
+      <div class="wa-footer">
+        <div class="brand-tag">Yaar<span>é</span></div>
+        <div class="url">yaarer.com</div>
+      </div>
+    </div>
+    <div class="post-meta">
+      <span class="platform">WhatsApp Contact</span>
+      <span class="dimensions">1080 &times; 1920</span>
+    </div>
+  </div>
+
+  <!-- POST 9: Témoignage -->
+  <div class="post-wrapper">
+    <div class="post post--story post-temoignage">
+      <div class="temo-top">
+        <div class="temo-quote-mark">&ldquo;</div>
+        <div class="temo-quote">
+          J'ai vendu ma moto en 3 jours grâce à Yaaré. J'ai reçu 12 messages WhatsApp le premier jour !
+        </div>
+        <div class="temo-author">
+          <div class="temo-avatar">AB</div>
+          <div class="temo-name">Abdoul B.</div>
+          <div class="temo-city">Ouagadougou</div>
+        </div>
+      </div>
+      <div class="temo-stats">
+        <div class="temo-stat">
+          <div class="val">3</div>
+          <div class="desc">jours pour vendre</div>
+        </div>
+        <div class="temo-stat">
+          <div class="val">12</div>
+          <div class="desc">contacts reçus</div>
+        </div>
+        <div class="temo-stat">
+          <div class="val">0</div>
+          <div class="desc">FCFA de frais</div>
+        </div>
+        <div class="temo-stat">
+          <div class="val">5★</div>
+          <div class="desc">satisfaction</div>
+        </div>
+      </div>
+      <div class="temo-footer">
+        <div class="cta">Essayez Yaaré</div>
+        <div class="url">yaarer.com</div>
+      </div>
+    </div>
+    <div class="post-meta">
+      <span class="platform">Témoignage</span>
+      <span class="dimensions">1080 &times; 1920</span>
+    </div>
+  </div>
+
+</div>
+
+<div class="caption-block" style="margin-left:auto;margin-right:auto;max-width:1200px;padding-left:1.5rem;padding-right:1.5rem">
+  <h3><span class="tag tag--ig">Instagram</span> <span class="tag tag--fb">Facebook</span> <span class="tag tag--tk">TikTok</span> Story tutoriel</h3>
+  <pre>📲 Vendez sur Yaaré en 4 étapes faciles !
+
+1️⃣ Créez votre compte (30 secondes)
+2️⃣ Publiez votre annonce avec photos
+3️⃣ Recevez des contacts WhatsApp
+4️⃣ Vendez !
+
+Le tout gratuitement 🎉
+
+👉 yaarer.com
+
+#CommentVendre #Yaaré #BurkinaFaso #TutoVente #PetitesAnnonces</pre>
+</div>
+
+<div class="caption-block" style="margin-left:auto;margin-right:auto;max-width:1200px;padding-left:1.5rem;padding-right:1.5rem">
+  <h3><span class="tag tag--tk">TikTok</span> <span class="tag tag--ig">Reels</span> Script vidéo — Témoignage</h3>
+  <pre>🎬 SCRIPT VIDÉO (15-30 sec)
+
+[Plan 1 — Face caméra, sourire]
+"J'ai posté ma moto sur Yaaré…"
+
+[Plan 2 — Écran téléphone, notifications WhatsApp]
+"Le premier jour, 12 personnes m'ont contacté !"
+
+[Plan 3 — Poignée de main / remise de clés]
+"3 jours plus tard, c'était vendu."
+
+[Plan 4 — Face caméra]
+"Et le meilleur ? C'est 100% gratuit. Essayez Yaaré !"
+
+[Texte à l'écran] yaarer.com
+
+🎵 Musique suggérée : afrobeat tendance, beat positif</pre>
+</div>
+
+<!-- ===== FACEBOOK COVER & POST LARGE ===== -->
+<div class="section-label">Facebook — Couverture &amp; post large</div>
+
+<div class="gallery gallery--wide">
+
+  <!-- POST 6: Facebook Cover -->
+  <div class="post-wrapper">
+    <div class="post post--fb-cover post-cover">
+      <div class="cover-weave"></div>
+      <div class="cover-left">
+        <div class="cover-logo">Yaar<span class="ca">é</span></div>
+        <div class="cover-sub">Le marché en ligne du Burkina Faso</div>
+      </div>
+      <div class="cover-right">
+        <div class="cover-stat">
+          <div class="num">10+</div>
+          <div class="label">Catégories</div>
+        </div>
+        <div class="cover-stat">
+          <div class="num">15+</div>
+          <div class="label">Villes</div>
+        </div>
+        <div class="cover-stat">
+          <div class="num">0 F</div>
+          <div class="label">Frais</div>
+        </div>
+      </div>
+    </div>
+    <div class="post-meta">
+      <span class="platform">Couverture Facebook</span>
+      <span class="dimensions">820 &times; 312</span>
+    </div>
+  </div>
+
+  <!-- POST 5: Vendeur CTA -->
+  <div class="post-wrapper">
+    <div class="post post--fb-post post-vendeur">
+      <div class="left">
+        <h2>Vous avez quelque chose à <span class="hl">vendre</span> ?</h2>
+        <p>Publiez votre annonce gratuitement en moins de 2 minutes. Des acheteurs à Ouagadougou, Bobo-Dioulasso et partout au Faso vous attendent.</p>
+        <div class="btn-row">
+          <div class="btn-primary">Publier une annonce</div>
+          <div class="btn-ghost">yaarer.com</div>
+        </div>
+      </div>
+      <div class="phone-mockup">
+        <div class="phone-screen">
+          <div class="phone-header">
+            <div class="ph-logo">Yaar<span class="pa">é</span></div>
+          </div>
+          <div class="phone-search">🔍 Rechercher sur Yaaré...</div>
+          <div class="phone-cards">
+            <div class="ph-card">
+              <div class="ph-card-img" style="background:#F0F7F2">🚗</div>
+              <div class="ph-card-info">
+                <div class="ph-title">Toyota Corolla</div>
+                <div class="ph-price">3 500 000 F</div>
+              </div>
+            </div>
+            <div class="ph-card">
+              <div class="ph-card-img" style="background:#FFF8E1">📱</div>
+              <div class="ph-card-info">
+                <div class="ph-title">iPhone 13</div>
+                <div class="ph-price">185 000 F</div>
+              </div>
+            </div>
+            <div class="ph-card">
+              <div class="ph-card-img" style="background:#E3F2FD">🏠</div>
+              <div class="ph-card-info">
+                <div class="ph-title">Villa 3 ch.</div>
+                <div class="ph-price">150 000 F/mois</div>
+              </div>
+            </div>
+            <div class="ph-card">
+              <div class="ph-card-img" style="background:#FCE4EC">👗</div>
+              <div class="ph-card-info">
+                <div class="ph-title">Robe bazin</div>
+                <div class="ph-price">25 000 F</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="post-meta">
+      <span class="platform">CTA vendeur</span>
+      <span class="dimensions">1200 &times; 630</span>
+    </div>
+  </div>
+</div>
+
+<div class="caption-block" style="margin-left:auto;margin-right:auto;max-width:1200px;padding-left:1.5rem;padding-right:1.5rem">
+  <h3><span class="tag tag--fb">Facebook</span> Post CTA vendeur</h3>
+  <pre>🏪 Vous avez quelque chose à vendre ?
+
+Sur Yaaré, publiez votre annonce GRATUITEMENT en moins de 2 minutes :
+
+📸 Ajoutez jusqu'à 5 photos
+💰 Fixez votre prix
+📲 Les acheteurs vous contactent sur WhatsApp
+
+Que ce soit une voiture, un téléphone, un appartement ou du bazin — il y a un acheteur pour vous sur Yaaré.
+
+👉 Publiez maintenant : yaarer.com
+
+#Yaaré #VendezAuBurkina #PetitesAnnonces #Ouagadougou #BoboDioulasso #BurkinaFaso</pre>
+</div>
+
+<!-- ===== CALENDRIER ÉDITORIAL ===== -->
+<div class="section-label">Calendrier éditorial — Semaine type</div>
+
+<div class="caption-block" style="margin-left:auto;margin-right:auto;max-width:1200px;padding-left:1.5rem;padding-right:1.5rem">
+  <h3>Planning hebdomadaire suggéré</h3>
+  <pre>
+LUNDI      → Post catégorie (ex: "Les meilleures offres véhicules cette semaine")
+MARDI      → Story tutoriel ("Comment publier une annonce en 2 min")
+MERCREDI   → Témoignage client / success story
+JEUDI      → Post promo catégorie (téléphones, immobilier, mode…)
+VENDREDI   → Reel/TikTok vidéo courte (avant/après vente, réaction vendeur)
+SAMEDI     → Post engagement ("Quel est l'objet que vous cherchez ? 👇")
+DIMANCHE   → Story rappel ("Bonne affaire du week-end sur yaarer.com")
+
+FRÉQUENCE RECOMMANDÉE :
+• Instagram : 1 post/jour + 2-3 stories/jour
+• Facebook  : 1 post/jour + 1 story/jour
+• TikTok    : 3-5 vidéos/semaine (15-60 sec)
+
+HEURES OPTIMALES (Burkina Faso, GMT) :
+• Matin : 7h-9h (trajet travail)
+• Midi  : 12h-14h (pause déjeuner)
+• Soir  : 18h-21h (après travail) ← meilleur engagement</pre>
+</div>
+
+<div class="kit-footer">
+  Kit réseaux sociaux Yaaré — yaarer.com — Tous les visuels sont au format recommandé par chaque plateforme.
+</div>
