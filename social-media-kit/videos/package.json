@@ -1,0 +1,28 @@
+{
+  "name": "videos",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "studio": "npx remotion studio src/index.ts",
+    "render:all": "npm run render:brand && npm run render:gratuit && npm run render:howto && npm run render:whatsapp && npm run render:temoignage",
+    "render:brand": "npx remotion render src/index.ts BrandAwareness out/01-brand-awareness.mp4",
+    "render:gratuit": "npx remotion render src/index.ts Gratuit out/02-gratuit.mp4",
+    "render:howto": "npx remotion render src/index.ts HowTo-Story out/03-howto-story.mp4",
+    "render:whatsapp": "npx remotion render src/index.ts WhatsApp-Story out/04-whatsapp-story.mp4",
+    "render:temoignage": "npx remotion render src/index.ts Temoignage-Story out/05-temoignage-story.mp4"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@remotion/bundler": "^4.0.490",
+    "@remotion/cli": "^4.0.490",
+    "@types/react": "^19.2.17",
+    "@types/react-dom": "^19.2.3",
+    "react": "^19.2.7",
+    "react-dom": "^19.2.7",
+    "remotion": "^4.0.490",
+    "typescript": "^5.9.3"
+  }
+}

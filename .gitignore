@@ -33,3 +33,5 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 .claude/
+social-media-kit/videos/node_modules/
+social-media-kit/videos/out/
