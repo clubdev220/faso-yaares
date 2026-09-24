@@ -2,7 +2,7 @@ import { redirect } from 'next/navigation'
 import { Header } from '@/components/layout/Header'
 import { Footer } from '@/components/layout/Footer'
 import { MobileNav } from '@/components/layout/MobileNav'
-import { createAdminClient, createClient } from '@/lib/supabase/server'
+import { createClient } from '@/lib/supabase/server'
 
 export default async function ProtectedLayout({
   children,
@@ -16,8 +16,9 @@ export default async function ProtectedLayout({
     redirect('/login')
   }
 
-  const admin = await createAdminClient()
-  const { data: userProfile } = await admin
+  // Lecture de son propre profil : la session suffit (RLS), pas besoin de
+  // la clé service_role.
+  const { data: userProfile } = await supabase
     .from('users')
     .select('full_name, avatar_url')
     .eq('id', user.id)

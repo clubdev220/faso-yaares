@@ -8,7 +8,8 @@ export type Json =
 
 export interface User {
   id: string
-  phone: string
+  phone: string | null
+  email?: string | null
   full_name: string | null
   avatar_url: string | null
   city: string | null

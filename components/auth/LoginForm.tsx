@@ -1,20 +1,73 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { Loader2, Phone } from 'lucide-react'
+import { Loader2, Mail, Phone } from 'lucide-react'
 import toast from 'react-hot-toast'
 import { loginSchema, type LoginInput } from '@/lib/validations'
 import { cn, getSafeRedirectPath, normalizePhone } from '@/lib/utils'
 import { COUNTRY_CODE } from '@/lib/constants'
+import { EmailAuthForm } from '@/components/auth/EmailAuthForm'
+import { GoogleSignInButton } from '@/components/auth/GoogleSignInButton'
+
+type Method = 'phone' | 'email'
 
 export function LoginForm() {
-  const [isLoading, setIsLoading] = useState(false)
-  const router = useRouter()
+  const [method, setMethod] = useState<Method>('phone')
   const searchParams = useSearchParams()
   const redirectTo = getSafeRedirectPath(searchParams.get('redirect'), '/dashboard')
+  const authError = searchParams.get('error')
+
+  useEffect(() => {
+    if (authError) toast.error('La connexion a échoué. Réessayez.')
+  }, [authError])
+
+  return (
+    <div className="card p-6">
+      <div className="mb-5 grid grid-cols-2 gap-2">
+        {(['phone', 'email'] as Method[]).map((m) => {
+          const Icon = m === 'phone' ? Phone : Mail
+          return (
+            <button
+              key={m}
+              type="button"
+              onClick={() => setMethod(m)}
+              className={cn(
+                'flex items-center justify-center gap-2 rounded-xl border-2 py-2.5 text-sm font-medium transition-colors',
+                method === m
+                  ? 'border-primary bg-primary/5 text-primary'
+                  : 'border-gray-200 text-gray-500 hover:border-gray-300'
+              )}
+            >
+              <Icon className="h-4 w-4" />
+              {m === 'phone' ? 'Téléphone' : 'E-mail'}
+            </button>
+          )
+        })}
+      </div>
+
+      {method === 'phone' ? (
+        <PhoneLoginForm redirectTo={redirectTo} />
+      ) : (
+        <EmailAuthForm redirectTo={redirectTo} />
+      )}
+
+      <div className="my-5 flex items-center gap-3 text-xs text-gray-400">
+        <div className="h-px flex-1 bg-gray-200" />
+        ou
+        <div className="h-px flex-1 bg-gray-200" />
+      </div>
+
+      <GoogleSignInButton redirectTo={redirectTo} />
+    </div>
+  )
+}
+
+function PhoneLoginForm({ redirectTo }: { redirectTo: string }) {
+  const [isLoading, setIsLoading] = useState(false)
+  const router = useRouter()
 
   const {
     register,
@@ -57,7 +110,7 @@ export function LoginForm() {
   }
 
   return (
-    <div className="card p-6">
+    <div>
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4" noValidate>
         {/* Phone Input */}
         <div>

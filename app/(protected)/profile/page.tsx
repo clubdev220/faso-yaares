@@ -1,10 +1,11 @@
 import type { Metadata } from 'next'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
-import { User, MapPin, Phone, Edit2, Shield } from 'lucide-react'
-import { createAdminClient, createClient } from '@/lib/supabase/server'
+import { User, MapPin, Phone, Mail, Edit2, Shield } from 'lucide-react'
+import { createClient } from '@/lib/supabase/server'
 import { formatDate } from '@/lib/utils'
 import { LogoutButton } from '@/components/auth/LogoutButton'
+import { DeleteAccountButton } from '@/components/auth/DeleteAccountButton'
 import type { User as UserType } from '@/types'
 
 export const metadata: Metadata = {
@@ -17,8 +18,7 @@ export default async function ProfilePage() {
 
   if (!user) return null
 
-  const admin = await createAdminClient()
-  const { data } = await admin
+  const { data } = await supabase
     .from('users')
     .select('*')
     .eq('id', user.id)
@@ -67,10 +67,18 @@ export default async function ProfilePage() {
 
         {/* Info */}
         <div className="space-y-3 border-t border-gray-100 pt-4">
-          <div className="flex items-center gap-3 text-sm">
-            <Phone className="w-4 h-4 text-primary flex-shrink-0" />
-            <span className="text-gray-700">{profile?.phone || user.phone}</span>
-          </div>
+          {(profile?.phone || user.phone) && (
+            <div className="flex items-center gap-3 text-sm">
+              <Phone className="w-4 h-4 text-primary flex-shrink-0" />
+              <span className="text-gray-700">{profile?.phone || user.phone}</span>
+            </div>
+          )}
+          {(profile?.email || user.email) && (
+            <div className="flex items-center gap-3 text-sm">
+              <Mail className="w-4 h-4 text-primary flex-shrink-0" />
+              <span className="text-gray-700 break-all">{profile?.email || user.email}</span>
+            </div>
+          )}
           {profile?.city && (
             <div className="flex items-center gap-3 text-sm">
               <MapPin className="w-4 h-4 text-primary flex-shrink-0" />
@@ -101,6 +109,10 @@ export default async function ProfilePage() {
           <p className="text-2xl mb-1">❤️</p>
           <p className="text-sm font-medium text-gray-700">Mes favoris</p>
         </Link>
+      </div>
+
+      <div className="mt-8 border-t border-gray-100 pt-2">
+        <DeleteAccountButton />
       </div>
     </div>
   )
