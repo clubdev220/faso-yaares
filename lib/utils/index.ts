@@ -34,6 +34,17 @@ export function formatDate(date: string | Date): string {
   })
 }
 
+// Les dates s'affichent à l'heure du Burkina, pas celle de l'appareil.
+export const APP_TIME_ZONE = 'Africa/Ouagadougou'
+
+export function formatMonthYear(date: string | Date): string {
+  return new Date(date).toLocaleDateString('fr-BF', {
+    month: 'long',
+    year: 'numeric',
+    timeZone: APP_TIME_ZONE,
+  })
+}
+
 export function slugify(text: string): string {
   return text
     .toLowerCase()

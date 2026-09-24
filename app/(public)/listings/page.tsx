@@ -8,6 +8,7 @@ import { isSupabaseConfigured } from '@/lib/supabase/is-configured'
 import type { Listing, Category, SearchFilters } from '@/types'
 import { CATEGORIES_DATA } from '@/lib/constants'
 import { AutoRefresh } from '@/components/common/AutoRefresh'
+import { LISTING_SELLER_EMBED } from '@/lib/api/select'
 
 export const metadata: Metadata = {
   title: 'Annonces',
@@ -85,7 +86,7 @@ async function getListings(
     let query = supabase
       .from('listings')
       .select(
-        `*, category:categories(id,name,slug,icon,color), images:listing_images(id,url,thumbnail_url,display_order)`,
+        `*, category:categories(id,name,slug,icon,color), images:listing_images(id,url,thumbnail_url,display_order), ${LISTING_SELLER_EMBED}`,
         { count: 'exact' }
       )
       .eq('status', 'active')

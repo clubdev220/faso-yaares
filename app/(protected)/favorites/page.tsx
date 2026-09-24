@@ -4,6 +4,7 @@ import { Heart, Search } from 'lucide-react'
 import { createClient, createAdminClient } from '@/lib/supabase/server'
 import { ListingCard } from '@/components/listings/ListingCard'
 import type { Listing } from '@/types'
+import { LISTING_SELLER_EMBED } from '@/lib/api/select'
 
 export const metadata: Metadata = {
   title: 'Mes favoris',
@@ -23,7 +24,8 @@ export default async function FavoritesPage() {
       listing:listings(
         *,
         category:categories(id,name,slug,icon,color),
-        images:listing_images(id,url,thumbnail_url,display_order)
+        images:listing_images(id,url,thumbnail_url,display_order),
+        ${LISTING_SELLER_EMBED}
       )
     `)
     .eq('user_id', user.id)

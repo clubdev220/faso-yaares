@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 import { notFound, redirect } from 'next/navigation'
 import Link from 'next/link'
-import { MapPin, Clock, Package, Eye, ChevronLeft, Truck, Flag, AlertTriangle, Pencil } from 'lucide-react'
+import { MapPin, Clock, Package, Eye, ChevronLeft, ChevronRight, Truck, Flag, AlertTriangle, Pencil } from 'lucide-react'
 import { createAdminClient, createClient } from '@/lib/supabase/server'
 import { AutoRefresh } from '@/components/common/AutoRefresh'
 import { ViewCounter } from '@/components/common/ViewCounter'
@@ -9,13 +9,19 @@ import { ListingGallery } from '@/components/listings/ListingGallery'
 import { FavoriteButton } from '@/components/common/FavoriteButton'
 import { WhatsAppButton } from '@/components/common/WhatsAppButton'
 import { CategoryIcon } from '@/components/listings/CategoryIcon'
+import { StarRating } from '@/components/reviews/StarRating'
+import { SellerAvatar } from '@/components/sellers/SellerAvatar'
+import { VerifiedBadge } from '@/components/sellers/VerifiedBadge'
+import { getSellerRating } from '@/lib/api/reviews'
+import type { AnySupabaseClient } from '@/lib/supabase/types'
 import {
   formatPrice,
   formatDate,
+  formatMonthYear,
   getConditionLabel,
   buildWhatsAppMessage,
 } from '@/lib/utils'
-import type { Listing } from '@/types'
+import type { Listing, User } from '@/types'
 
 export const dynamic = 'force-dynamic'
 
@@ -36,7 +42,7 @@ async function getListing(id: string) {
     .single()
 
   if (error || !data) return null
-  return data as Listing & { user: NonNullable<Listing['user']> }
+  return data as unknown as Listing & { user: User | null }
 }
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
@@ -83,6 +89,10 @@ export default async function ListingDetailPage({ params }: PageProps) {
   })
 
   const sellerPhone = listing.user?.phone || ''
+  const sellerRating = await getSellerRating(
+    (await createClient()) as unknown as AnySupabaseClient,
+    listing.user_id
+  )
 
   const conditionBadge: Record<string, { label: string; class: string }> = {
     new: { label: 'Neuf', class: 'badge-success' },
@@ -261,25 +271,31 @@ export default async function ListingDetailPage({ params }: PageProps) {
             <div className="card p-5 lg:sticky lg:top-24">
               {/* Seller */}
               {listing.user && (
-                <div className="flex items-center gap-3 mb-5 pb-4 border-b border-gray-100">
-                  <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0 overflow-hidden">
-                    {listing.user.avatar_url ? (
-                      // eslint-disable-next-line @next/next/no-img-element
-                      <img
-                        src={listing.user.avatar_url}
-                        alt={listing.user.full_name || 'Vendeur'}
-                        className="w-full h-full object-cover"
-                      />
-                    ) : (
-                      <span className="text-xl font-bold text-primary">
-                        {listing.user.full_name?.[0]?.toUpperCase() || 'V'}
-                      </span>
-                    )}
-                  </div>
-                  <div className="min-w-0">
-                    <p className="font-heading font-semibold text-gray-900 truncate">
+                <Link
+                  href={`/vendeur/${listing.user_id}`}
+                  className="group flex items-center gap-3 mb-5 pb-4 border-b border-gray-100"
+                >
+                  <SellerAvatar
+                    url={listing.user.avatar_url}
+                    name={listing.user.full_name}
+                    className="w-12 h-12"
+                    textClassName="text-xl"
+                  />
+                  <div className="min-w-0 flex-1">
+                    <p className="font-heading font-semibold text-gray-900 truncate group-hover:text-primary transition-colors">
                       {listing.user.full_name || 'Vendeur'}
                     </p>
+                    {listing.user.is_verified && (
+                      <VerifiedBadge variant="inline" label="Vendeur vérifié" />
+                    )}
+                    {sellerRating.count > 0 && (
+                      <div className="flex items-center gap-1.5 mt-0.5">
+                        <StarRating rating={sellerRating.average} size="sm" />
+                        <span className="text-xs text-gray-500">
+                          {sellerRating.average.toFixed(1)} ({sellerRating.count} avis)
+                        </span>
+                      </div>
+                    )}
                     {listing.user.city && (
                       <p className="text-xs text-gray-500 flex items-center gap-1">
                         <MapPin className="w-3 h-3" />
@@ -287,14 +303,11 @@ export default async function ListingDetailPage({ params }: PageProps) {
                       </p>
                     )}
                     <p className="text-xs text-gray-400">
-                      Membre depuis{' '}
-                      {new Date(listing.user.created_at).toLocaleDateString('fr-BF', {
-                        month: 'long',
-                        year: 'numeric',
-                      })}
+                      Membre depuis {formatMonthYear(listing.user.created_at)}
                     </p>
                   </div>
-                </div>
+                  <ChevronRight className="w-4 h-4 text-gray-300 group-hover:text-primary flex-shrink-0" />
+                </Link>
               )}
 
               {/* Contact Buttons */}

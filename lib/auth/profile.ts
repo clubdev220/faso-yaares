@@ -1,4 +1,5 @@
-import type { SupabaseClient, User as AuthUser } from '@supabase/supabase-js'
+import type { User as AuthUser } from '@supabase/supabase-js'
+import type { AnySupabaseClient } from '@/lib/supabase/types'
 import type { User as Profile } from '@/types'
 
 export function getUserPhone(user: AuthUser): string {
@@ -28,11 +29,6 @@ export function isProfileComplete(profile: Profile | null): boolean {
   const fullName = profile?.full_name?.trim()
   return Boolean(fullName && fullName !== 'Utilisateur' && profile?.city?.trim())
 }
-
-// types/supabase.ts ne décrit ni les RPC ni les nouvelles tables : les
-// appels passent par un client non typé et les résultats sont typés ici.
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-type AnySupabaseClient = SupabaseClient<any, any, any>
 
 // Aucun trigger ne crée la ligne public.users : chaque connexion (SMS,
 // e-mail, Google) passe par la RPC ensure_profile, qui ne fait rien si le

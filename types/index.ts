@@ -20,6 +20,27 @@ export interface User {
   updated_at: string
 }
 
+// Vue publique public_profiles : jamais le téléphone.
+export interface PublicProfile {
+  id: string
+  full_name: string | null
+  avatar_url: string | null
+  is_verified: boolean
+  city: string | null
+  created_at: string
+}
+
+export interface Review {
+  id: string
+  listing_id: string
+  reviewer_id: string
+  seller_id: string
+  rating: number
+  comment: string | null
+  created_at: string
+  reviewer?: PublicProfile | null
+}
+
 export interface Category {
   id: string
   name: string
@@ -52,7 +73,7 @@ export interface Listing {
   expires_at: string | null
   created_at: string
   updated_at: string
-  user?: User
+  user?: User | PublicProfile | null
   category?: Category
   images?: ListingImage[]
 }

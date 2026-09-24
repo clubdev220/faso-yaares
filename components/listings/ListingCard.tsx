@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { MapPin, Clock, Package } from 'lucide-react'
 import { cn, formatPrice, formatDate, getConditionLabel, truncate } from '@/lib/utils'
 import { FavoriteButton } from '@/components/common/FavoriteButton'
+import { VerifiedBadge } from '@/components/sellers/VerifiedBadge'
 import type { Listing } from '@/types'
 
 interface ListingCardProps {
@@ -106,6 +107,10 @@ export function ListingCard({
           <h3 className="text-sm font-medium text-gray-800 leading-tight mb-2 line-clamp-2">
             {truncate(listing.title, 60)}
           </h3>
+
+          {listing.user?.is_verified && (
+            <VerifiedBadge variant="inline" label="Vendeur vérifié" className="mb-1.5" />
+          )}
 
           {/* Meta */}
           <div className="flex flex-col gap-1">
