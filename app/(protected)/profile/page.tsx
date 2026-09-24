@@ -100,10 +100,14 @@ export default async function ProfilePage() {
       </div>
 
       {/* Quick Links */}
-      <div className="grid grid-cols-2 gap-3">
+      <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
         <Link href="/dashboard" className="card p-4 text-center hover:shadow-md transition-shadow">
           <p className="text-2xl mb-1">📋</p>
           <p className="text-sm font-medium text-gray-700">Mes annonces</p>
+        </Link>
+        <Link href="/messages" className="card p-4 text-center hover:shadow-md transition-shadow">
+          <p className="text-2xl mb-1">💬</p>
+          <p className="text-sm font-medium text-gray-700">Messages</p>
         </Link>
         <Link href="/favorites" className="card p-4 text-center hover:shadow-md transition-shadow">
           <p className="text-2xl mb-1">❤️</p>

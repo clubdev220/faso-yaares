@@ -6,6 +6,7 @@ import { useState } from 'react'
 import { Search, Bell, User, Plus, Menu, X, Heart } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { LogoSVG } from '@/components/common/LogoSVG'
+import { MessagesLink } from '@/components/messages/MessagesLink'
 
 interface HeaderProps {
   user?: { full_name?: string | null; avatar_url?: string | null } | null
@@ -71,6 +72,7 @@ export function Header({ user }: HeaderProps) {
           <div className="hidden md:flex items-center gap-2 ml-4">
             {user ? (
               <>
+                <MessagesLink className="p-2 text-gray-500 hover:text-primary hover:bg-primary/10 rounded-xl transition-colors" />
                 <Link
                   href="/favorites"
                   className="p-2 text-gray-500 hover:text-secondary hover:bg-red-50 rounded-xl transition-colors"
@@ -125,6 +127,9 @@ export function Header({ user }: HeaderProps) {
 
           {/* Mobile: Search + Menu toggle */}
           <div className="flex items-center gap-2 md:hidden">
+            {user && (
+              <MessagesLink className="p-2 text-gray-500 hover:text-gray-900 rounded-xl" />
+            )}
             <Link
               href="/listings"
               className="p-2 text-gray-500 hover:text-gray-900 rounded-xl"
@@ -173,6 +178,11 @@ export function Header({ user }: HeaderProps) {
                     <User className="w-4 h-4 text-primary" />
                     Mon profil
                   </Link>
+                  <MessagesLink
+                    showLabel
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="flex items-center gap-2 px-3 py-2.5 rounded-xl text-sm font-medium text-gray-700 hover:bg-gray-50"
+                  />
                   <Link
                     href="/dashboard"
                     onClick={() => setMobileMenuOpen(false)}

@@ -32,7 +32,7 @@ export async function updateSession(request: NextRequest) {
     data: { user },
   } = await supabase.auth.getUser()
 
-  const protectedPaths = ['/dashboard', '/favorites', '/profile', '/create-listing']
+  const protectedPaths = ['/dashboard', '/favorites', '/profile', '/create-listing', '/messages']
   const adminPaths = ['/admin']
 
   const isProtected = protectedPaths.some((path) =>
@@ -45,7 +45,9 @@ export async function updateSession(request: NextRequest) {
   if (!user && (isProtected || isAdmin)) {
     const redirectUrl = request.nextUrl.clone()
     redirectUrl.pathname = '/login'
-    redirectUrl.searchParams.set('redirect', request.nextUrl.pathname)
+    // Garde la requête (ex. /messages/[id]?listing=…) dans la redirection.
+    redirectUrl.search = ''
+    redirectUrl.searchParams.set('redirect', `${request.nextUrl.pathname}${request.nextUrl.search}`)
     return NextResponse.redirect(redirectUrl)
   }
 

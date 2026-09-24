@@ -45,6 +45,66 @@ export function formatMonthYear(date: string | Date): string {
   })
 }
 
+// Clé « AAAA-MM-JJ » dans le fuseau du Burkina : sert à comparer des jours
+// indépendamment du fuseau de l'appareil.
+export function getMessageDayKey(date: string | Date): string {
+  return new Intl.DateTimeFormat('en-CA', {
+    timeZone: APP_TIME_ZONE,
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+  }).format(new Date(date))
+}
+
+function zonedYear(d: Date): number {
+  return Number(getMessageDayKey(d).slice(0, 4))
+}
+
+export function formatMessageTime(date: string | Date): string {
+  return new Date(date).toLocaleTimeString('fr-BF', {
+    hour: '2-digit',
+    minute: '2-digit',
+    timeZone: APP_TIME_ZONE,
+  })
+}
+
+// Sous chaque bulle : l'heure aujourd'hui, « Hier à HH:MM », sinon la date.
+export function formatMessageTimestamp(date: string | Date): string {
+  const d = new Date(date)
+  const now = new Date()
+  const yesterday = new Date(now.getTime() - 86400000)
+  const day = getMessageDayKey(d)
+
+  if (day === getMessageDayKey(now)) return formatMessageTime(d)
+  if (day === getMessageDayKey(yesterday)) return `Hier à ${formatMessageTime(d)}`
+
+  return `${d.toLocaleDateString('fr-BF', {
+    day: 'numeric',
+    month: 'short',
+    year: zonedYear(d) !== zonedYear(now) ? 'numeric' : undefined,
+    timeZone: APP_TIME_ZONE,
+  })} à ${formatMessageTime(d)}`
+}
+
+// Séparateur de jour dans une conversation.
+export function formatMessageDateDivider(date: string | Date): string {
+  const d = new Date(date)
+  const now = new Date()
+  const yesterday = new Date(now.getTime() - 86400000)
+  const day = getMessageDayKey(d)
+
+  if (day === getMessageDayKey(now)) return "Aujourd'hui"
+  if (day === getMessageDayKey(yesterday)) return 'Hier'
+
+  return d.toLocaleDateString('fr-BF', {
+    weekday: 'long',
+    day: 'numeric',
+    month: 'long',
+    year: zonedYear(d) !== zonedYear(now) ? 'numeric' : undefined,
+    timeZone: APP_TIME_ZONE,
+  })
+}
+
 export function slugify(text: string): string {
   return text
     .toLowerCase()

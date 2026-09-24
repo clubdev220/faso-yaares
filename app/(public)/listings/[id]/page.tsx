@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 import { notFound, redirect } from 'next/navigation'
 import Link from 'next/link'
-import { MapPin, Clock, Package, Eye, ChevronLeft, ChevronRight, Truck, Flag, AlertTriangle, Pencil } from 'lucide-react'
+import { MapPin, Clock, Package, Eye, ChevronLeft, ChevronRight, Truck, Flag, AlertTriangle, Pencil, MessageCircle } from 'lucide-react'
 import { createAdminClient, createClient } from '@/lib/supabase/server'
 import { AutoRefresh } from '@/components/common/AutoRefresh'
 import { ViewCounter } from '@/components/common/ViewCounter'
@@ -73,14 +73,21 @@ export default async function ListingDetailPage({ params }: PageProps) {
 
   if (!listing) notFound()
 
+  const authClient = await createClient()
+  const { data: { user: currentUser } } = await authClient.auth.getUser()
+
   // Annonce suspendue : seul le vendeur peut la voir
   if (listing.status === 'suspended') {
-    const authClient = await createClient()
-    const { data: { user } } = await authClient.auth.getUser()
-    if (!user || user.id !== listing.user_id) {
+    if (!currentUser || currentUser.id !== listing.user_id) {
       redirect('/listings')
     }
   }
+
+  const isOwnListing = currentUser?.id === listing.user_id
+  const conversationPath = `/messages/${listing.user_id}?listing=${listing.id}`
+  const messageHref = currentUser
+    ? conversationPath
+    : `/login?redirect=${encodeURIComponent(conversationPath)}`
 
   const whatsappMessage = buildWhatsAppMessage({
     title: listing.title,
@@ -90,7 +97,7 @@ export default async function ListingDetailPage({ params }: PageProps) {
 
   const sellerPhone = listing.user?.phone || ''
   const sellerRating = await getSellerRating(
-    (await createClient()) as unknown as AnySupabaseClient,
+    authClient as unknown as AnySupabaseClient,
     listing.user_id
   )
 
@@ -311,7 +318,13 @@ export default async function ListingDetailPage({ params }: PageProps) {
               )}
 
               {/* Contact Buttons */}
-              <div>
+              <div className="space-y-2">
+                {!isOwnListing && listing.status !== 'suspended' && (
+                  <Link href={messageHref} className="btn-primary btn-lg w-full">
+                    <MessageCircle className="w-5 h-5" />
+                    Envoyer un message
+                  </Link>
+                )}
                 <WhatsAppButton
                   phone={sellerPhone}
                   message={whatsappMessage}

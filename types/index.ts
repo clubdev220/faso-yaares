@@ -109,6 +109,41 @@ export interface Report {
   listing?: Listing
 }
 
+export interface Message {
+  id: string
+  sender_id: string
+  receiver_id: string
+  listing_id: string | null
+  content: string
+  is_read: boolean
+  delivered_at: string | null
+  created_at: string
+}
+
+export interface MessageThread {
+  other_user_id: string
+  listing_id: string | null
+  last_message: Message
+  unread_count: number
+  other_participant?: PublicProfile | null
+  listing?: Pick<Listing, 'id' | 'title' | 'images'> | null
+}
+
+export type OfferStatus = 'pending' | 'accepted' | 'rejected' | 'countered'
+
+export interface Offer {
+  id: string
+  listing_id: string
+  buyer_id: string
+  seller_id: string
+  amount: number
+  status: OfferStatus
+  parent_offer_id: string | null
+  last_actor_id: string
+  created_at: string
+  updated_at: string
+}
+
 export interface PaginatedResponse<T> {
   data: T[]
   count: number
