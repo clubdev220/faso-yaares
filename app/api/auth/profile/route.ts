@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server'
-import { createClient } from '@/lib/supabase/server'
+import { createAdminClient, createClient } from '@/lib/supabase/server'
 import { ensureProfile, isProfileComplete } from '@/lib/auth/profile'
 import { profileSchema } from '@/lib/validations'
 import type { User as Profile } from '@/types'
@@ -34,6 +34,28 @@ export async function GET() {
   }
 }
 
+// Choix produit (comme avant sur le web) : tout compte qui complète son
+// profil reçoit le badge « Vérifié ». is_verified est écrit avec la clé
+// serveur ; en cas d'échec, l'enregistrement du profil n'est pas bloqué.
+async function markVerified(userId: string): Promise<boolean> {
+  try {
+    const admin = await createAdminClient()
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const { data, error } = await (admin.from('users') as any)
+      .update({ is_verified: true })
+      .eq('id', userId)
+      .select('id')
+    if (error) {
+      console.error('Profile verify error:', error)
+      return false
+    }
+    return Array.isArray(data) && data.length > 0
+  } catch (err) {
+    console.error('Profile verify error:', err)
+    return false
+  }
+}
+
 export async function PUT(request: Request) {
   try {
     const { supabase, user } = await getCurrentUser()
@@ -63,8 +85,10 @@ export async function PUT(request: Request) {
       throw error
     }
 
+    const verified = await markVerified(user.id)
+
     return NextResponse.json({
-      profile: profile as Profile,
+      profile: { ...(profile as Profile), ...(verified ? { is_verified: true } : {}) },
       isComplete: true,
     })
   } catch (err) {
