@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { Heart, Search } from 'lucide-react'
-import { createClient, createAdminClient } from '@/lib/supabase/server'
+import { createClient } from '@/lib/supabase/server'
 import { ListingCard } from '@/components/listings/ListingCard'
 import type { Listing } from '@/types'
 import { LISTING_SELLER_EMBED } from '@/lib/api/select'
@@ -16,9 +16,9 @@ export default async function FavoritesPage() {
 
   if (!user) return null
 
-  const admin = await createAdminClient()
+  // Ses propres favoris : la session suffit (RLS).
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const { data: favorites } = await (admin.from('favorites') as any)
+  const { data: favorites } = await (supabase.from('favorites') as any)
     .select(`
       id,
       listing:listings(
