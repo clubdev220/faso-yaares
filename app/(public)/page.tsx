@@ -79,7 +79,17 @@ export default async function HomePage() {
               Achetez et vendez facilement près de chez vous. Des milliers d&apos;annonces vous attendent.
             </p>
 
-            <SearchBar className="max-w-xl mx-auto" />
+            <SearchBar
+              className="max-w-xl mx-auto"
+              target="assistant"
+              placeholder="Que cherchez-vous ? Ex : une moto à Bobo"
+            />
+            <p className="mt-3 text-sm text-primary-100">
+              L&apos;assistant trouve les annonces pour vous, ou{' '}
+              <Link href="/listings" className="font-medium text-white underline underline-offset-2">
+                parcourez toutes les annonces
+              </Link>
+            </p>
 
             <div className="flex items-center justify-center gap-6 mt-8 text-sm text-primary-100">
               <div className="flex items-center gap-2">

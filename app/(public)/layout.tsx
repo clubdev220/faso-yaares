@@ -1,6 +1,7 @@
 import { Header } from '@/components/layout/Header'
 import { Footer } from '@/components/layout/Footer'
 import { MobileNav } from '@/components/layout/MobileNav'
+import { AssistantFab } from '@/components/assistant/AssistantFab'
 import { isSupabaseConfigured } from '@/lib/supabase/is-configured'
 
 export default async function PublicLayout({
@@ -36,6 +37,7 @@ export default async function PublicLayout({
       <main className="flex-1 content-with-bottom-nav">{children}</main>
       <Footer />
       <MobileNav />
+      <AssistantFab />
     </div>
   )
 }

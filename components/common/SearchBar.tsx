@@ -2,7 +2,7 @@
 
 import { useState, useRef } from 'react'
 import { useRouter } from 'next/navigation'
-import { Search, X } from 'lucide-react'
+import { Search, Sparkles, X } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
 interface SearchBarProps {
@@ -10,6 +10,8 @@ interface SearchBarProps {
   placeholder?: string
   initialQuery?: string
   autoFocus?: boolean
+  // 'assistant' : la recherche ouvre l'assistant IA au lieu de la liste.
+  target?: 'listings' | 'assistant'
 }
 
 export function SearchBar({
@@ -17,6 +19,7 @@ export function SearchBar({
   placeholder = 'Rechercher une annonce...',
   initialQuery = '',
   autoFocus = false,
+  target = 'listings',
 }: SearchBarProps) {
   const [query, setQuery] = useState(initialQuery)
   const router = useRouter()
@@ -24,10 +27,11 @@ export function SearchBar({
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
+    const base = target === 'assistant' ? '/assistant' : '/listings'
     if (query.trim()) {
-      router.push(`/listings?q=${encodeURIComponent(query.trim())}`)
+      router.push(`${base}?q=${encodeURIComponent(query.trim())}`)
     } else {
-      router.push('/listings')
+      router.push(base)
     }
   }
 
@@ -46,7 +50,11 @@ export function SearchBar({
         Rechercher
       </label>
       <div className="relative flex-1">
-        <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 pointer-events-none" />
+        {target === 'assistant' ? (
+          <Sparkles className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-primary pointer-events-none" />
+        ) : (
+          <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 pointer-events-none" />
+        )}
         <input
           ref={inputRef}
           id="search-input"
@@ -56,7 +64,7 @@ export function SearchBar({
           placeholder={placeholder}
           autoFocus={autoFocus}
           className="w-full pl-12 pr-12 py-3.5 bg-white rounded-xl border border-white/30 text-gray-900 placeholder-gray-400 shadow-sm focus:outline-none focus:ring-2 focus:ring-white/50 focus:border-white/50 text-base"
-          aria-label="Rechercher des annonces"
+          aria-label={target === 'assistant' ? "Décrivez ce que vous cherchez" : 'Rechercher des annonces'}
         />
         {query && (
           <button
@@ -72,9 +80,9 @@ export function SearchBar({
       <button
         type="submit"
         className="ml-2 px-5 py-3.5 bg-secondary text-white font-medium rounded-xl hover:bg-secondary-600 active:scale-95 transition-all focus:outline-none focus:ring-2 focus:ring-secondary/50 whitespace-nowrap flex-shrink-0"
-        aria-label="Lancer la recherche"
+        aria-label={target === 'assistant' ? "Demander à l'assistant" : 'Lancer la recherche'}
       >
-        Chercher
+        {target === 'assistant' ? 'Demander' : 'Chercher'}
       </button>
     </form>
   )
