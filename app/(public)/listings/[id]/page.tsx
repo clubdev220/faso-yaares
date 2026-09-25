@@ -22,7 +22,9 @@ import {
   getConditionLabel,
   buildWhatsAppMessage,
 } from '@/lib/utils'
-import type { Listing, User } from '@/types'
+import type { Listing, PublicProfile } from '@/types'
+import { LISTING_SELLER_EMBED } from '@/lib/api/select'
+import { BURKINA_CITY_COORDINATES } from '@/lib/constants'
 
 export const dynamic = 'force-dynamic'
 
@@ -33,17 +35,29 @@ interface PageProps {
 async function getListing(id: string) {
   const supabase = await createAdminClient()
 
+  // Vendeur via la vue publique (nom, badge, ville… toujours lisibles) ; le
+  // téléphone, privé, est lu à part pour le bouton WhatsApp.
   const { data, error } = await supabase
     .from('listings')
     .select(
-      `*, user:users(id,full_name,avatar_url,phone,city,is_verified,created_at), category:categories(id,name,slug,icon,color), images:listing_images(id,url,thumbnail_url,display_order)`
+      `*, ${LISTING_SELLER_EMBED}, category:categories(id,name,slug,icon,color), images:listing_images(id,url,thumbnail_url,display_order)`
     )
     .eq('id', id)
     .in('status', ['active', 'sold', 'suspended'])
     .single()
 
   if (error || !data) return null
-  return data as unknown as Listing & { user: User | null }
+  return data as unknown as Listing & { user: PublicProfile | null }
+}
+
+async function getSellerPhone(userId: string): Promise<string> {
+  try {
+    const admin = await createAdminClient()
+    const { data } = await admin.from('users').select('phone').eq('id', userId).maybeSingle()
+    return (data as { phone: string | null } | null)?.phone || ''
+  } catch {
+    return ''
+  }
 }
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
@@ -96,7 +110,15 @@ export default async function ListingDetailPage({ params }: PageProps) {
     id: listing.id,
   })
 
-  const sellerPhone = listing.user?.phone || ''
+  const sellerPhone = await getSellerPhone(listing.user_id)
+  // Annonces publiées avant la géolocalisation : centre de la ville.
+  const cityCoordinates = BURKINA_CITY_COORDINATES[listing.city]
+  const mapPosition =
+    listing.latitude != null && listing.longitude != null
+      ? { latitude: listing.latitude, longitude: listing.longitude, approximate: false }
+      : cityCoordinates && listing.city !== 'Autre'
+        ? { ...cityCoordinates, approximate: true }
+        : null
   const sellerRating = await getSellerRating(
     authClient as unknown as AnySupabaseClient,
     listing.user_id
@@ -261,11 +283,12 @@ export default async function ListingDetailPage({ params }: PageProps) {
               </div>
             </div>
 
-            {listing.latitude != null && listing.longitude != null && (
+            {mapPosition && (
               <ListingMap
-                latitude={listing.latitude}
-                longitude={listing.longitude}
+                latitude={mapPosition.latitude}
+                longitude={mapPosition.longitude}
                 label={listing.neighborhood ? `${listing.neighborhood}, ${listing.city}` : listing.city}
+                approximate={mapPosition.approximate}
               />
             )}
 

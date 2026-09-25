@@ -4,11 +4,13 @@ interface ListingMapProps {
   latitude: number
   longitude: number
   label: string
+  // Pas de position enregistrée : centre de la ville, carte plus large.
+  approximate?: boolean
 }
 
 // Aperçu OpenStreetMap intégré : ni bibliothèque ni clé d'API.
-export function ListingMap({ latitude, longitude, label }: ListingMapProps) {
-  const delta = 0.01
+export function ListingMap({ latitude, longitude, label, approximate = false }: ListingMapProps) {
+  const delta = approximate ? 0.05 : 0.01
   const bbox = [longitude - delta, latitude - delta, longitude + delta, latitude + delta]
     .map((n) => n.toFixed(5))
     .join(',')
@@ -40,7 +42,10 @@ export function ListingMap({ latitude, longitude, label }: ListingMapProps) {
         referrerPolicy="no-referrer"
       />
       <p className="px-5 py-2 text-xs text-gray-400">
-        Position approximative indiquée par le vendeur. ©{' '}
+        {approximate
+          ? 'Position approximative : centre de la ville indiquée dans l’annonce.'
+          : 'Position approximative indiquée par le vendeur.'}{' '}
+        ©{' '}
         <a
           href="https://www.openstreetmap.org/copyright"
           target="_blank"
