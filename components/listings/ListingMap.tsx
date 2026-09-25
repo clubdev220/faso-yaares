@@ -34,25 +34,29 @@ export function ListingMap({ latitude, longitude, label, approximate = false }: 
           Ouvrir dans Maps
         </a>
       </div>
-      <iframe
-        title={`Carte : ${label}`}
-        src={embedUrl}
-        className="w-full h-56 border-0"
-        loading="lazy"
-        referrerPolicy="no-referrer"
-      />
+      {/* La barre de liens d'OpenStreetMap en bas de l'iframe est masquée en
+          rognant la carte ; le crédit (obligatoire) est repris ci-dessous. */}
+      <div className="relative h-56 overflow-hidden">
+        <iframe
+          title={`Carte : ${label}`}
+          src={embedUrl}
+          className="absolute inset-x-0 top-0 w-full border-0"
+          style={{ height: 'calc(100% + 56px)' }}
+          loading="lazy"
+          referrerPolicy="no-referrer"
+        />
+      </div>
       <p className="px-5 py-2 text-xs text-gray-400">
         {approximate
           ? 'Position approximative : centre de la ville indiquée dans l’annonce.'
-          : 'Position approximative indiquée par le vendeur.'}{' '}
-        ©{' '}
+          : 'Position approximative indiquée par le vendeur.'}
         <a
           href="https://www.openstreetmap.org/copyright"
           target="_blank"
           rel="noopener noreferrer"
-          className="hover:underline"
+          className="float-right hover:underline"
         >
-          OpenStreetMap
+          © OpenStreetMap
         </a>
       </p>
     </div>

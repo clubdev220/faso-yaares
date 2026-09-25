@@ -35,8 +35,8 @@ interface PageProps {
 async function getListing(id: string) {
   const supabase = await createAdminClient()
 
-  // Vendeur via la vue publique (nom, badge, ville… toujours lisibles) ; le
-  // téléphone, privé, est lu à part pour le bouton WhatsApp.
+  // Vendeur via la vue publique (nom, badge, ville) : son téléphone n'est
+  // jamais chargé dans la page, le bouton WhatsApp le demande au clic.
   const { data, error } = await supabase
     .from('listings')
     .select(
@@ -48,16 +48,6 @@ async function getListing(id: string) {
 
   if (error || !data) return null
   return data as unknown as Listing & { user: PublicProfile | null }
-}
-
-async function getSellerPhone(userId: string): Promise<string> {
-  try {
-    const admin = await createAdminClient()
-    const { data } = await admin.from('users').select('phone').eq('id', userId).maybeSingle()
-    return (data as { phone: string | null } | null)?.phone || ''
-  } catch {
-    return ''
-  }
 }
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
@@ -110,7 +100,6 @@ export default async function ListingDetailPage({ params }: PageProps) {
     id: listing.id,
   })
 
-  const sellerPhone = await getSellerPhone(listing.user_id)
   // Annonces publiées avant la géolocalisation : centre de la ville.
   const cityCoordinates = BURKINA_CITY_COORDINATES[listing.city]
   const mapPosition =
@@ -357,11 +346,13 @@ export default async function ListingDetailPage({ params }: PageProps) {
                     Envoyer un message
                   </Link>
                 )}
-                <WhatsAppButton
-                  phone={sellerPhone}
-                  message={whatsappMessage}
-                  className="w-full btn-lg"
-                />
+                {!isOwnListing && listing.status === 'active' && (
+                  <WhatsAppButton
+                    listingId={listing.id}
+                    message={whatsappMessage}
+                    className="w-full btn-lg"
+                  />
+                )}
               </div>
 
               <p className="text-xs text-gray-400 text-center mt-4">
