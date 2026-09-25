@@ -3,7 +3,7 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import { MapPin, Clock, Package } from 'lucide-react'
-import { cn, formatPrice, formatDate, getConditionLabel, truncate } from '@/lib/utils'
+import { cn, formatDistance, formatPrice, formatDate, getConditionLabel, truncate } from '@/lib/utils'
 import { FavoriteButton } from '@/components/common/FavoriteButton'
 import { VerifiedBadge } from '@/components/sellers/VerifiedBadge'
 import type { Listing } from '@/types'
@@ -114,7 +114,15 @@ export function ListingCard({
 
           {/* Meta */}
           <div className="flex flex-col gap-1">
-            {listing.city && (
+            {listing.distance_km != null ? (
+              <div className="flex items-center gap-1 text-xs text-gray-400">
+                <MapPin className="w-3 h-3 flex-shrink-0 text-primary" />
+                <span className="truncate">
+                  <span className="font-semibold text-primary">{formatDistance(listing.distance_km)}</span>
+                  {listing.city ? ` · ${listing.city}` : ''}
+                </span>
+              </div>
+            ) : listing.city && (
               <div className="flex items-center gap-1 text-xs text-gray-400">
                 <MapPin className="w-3 h-3 flex-shrink-0" />
                 <span className="truncate">

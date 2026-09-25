@@ -3,6 +3,7 @@ import type { User } from '@supabase/supabase-js'
 import { createAdminClient, createClient } from '@/lib/supabase/server'
 import { listingSchema } from '@/lib/validations'
 import { MAX_IMAGES_PER_LISTING, MAX_IMAGE_SIZE_BYTES } from '@/lib/constants'
+import { parseCoordinate } from '@/lib/geo'
 
 type ListingRow = {
   id: string
@@ -147,6 +148,9 @@ export async function POST(request: Request) {
       return NextResponse.json(getValidationPayload(parsed), { status: 400 })
     }
 
+    const latitude = parseCoordinate(formData.get('latitude'), 90)
+    const longitude = parseCoordinate(formData.get('longitude'), 180)
+
     const images = getImages(formData)
     const invalidImage = images.find(
       (file) => file.size > MAX_IMAGE_SIZE_BYTES || !file.type.startsWith('image/')
@@ -208,6 +212,7 @@ export async function POST(request: Request) {
       .insert({
         ...parsed.data,
         neighborhood: parsed.data.neighborhood || null,
+        ...(latitude !== null && longitude !== null ? { latitude, longitude } : {}),
         user_id: user.id,
         status: 'active',
         published_at: new Date().toISOString(),

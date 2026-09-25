@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import { cookies } from 'next/headers'
 import { Suspense } from 'react'
 import { ListingCard, ListingCardSkeleton } from '@/components/listings/ListingCard'
 import { FilterPanel } from '@/components/listings/FilterPanel'
@@ -6,7 +7,8 @@ import { InlineSearchBar } from '@/components/common/SearchBar'
 import { SortSelect } from '@/components/listings/SortSelect'
 import { isSupabaseConfigured } from '@/lib/supabase/is-configured'
 import type { Listing, Category, SearchFilters } from '@/types'
-import { CATEGORIES_DATA } from '@/lib/constants'
+import { CATEGORIES_DATA, GEO_COOKIE, NEARBY_RADIUS_KM } from '@/lib/constants'
+import type { AnySupabaseClient } from '@/lib/supabase/types'
 import { AutoRefresh } from '@/components/common/AutoRefresh'
 import { LISTING_SELLER_EMBED } from '@/lib/api/select'
 
@@ -71,6 +73,80 @@ async function getCategoryBySlug(slug: string): Promise<Category | null> {
     return data as unknown as Category | null
   } catch {
     return null
+  }
+}
+
+async function getGeoFromCookie(): Promise<{ lat: number; lng: number } | null> {
+  const raw = (await cookies()).get(GEO_COOKIE)?.value
+  if (!raw) return null
+  const [lat, lng] = raw.split(',').map(Number)
+  if (!Number.isFinite(lat) || !Number.isFinite(lng) || Math.abs(lat) > 90 || Math.abs(lng) > 180) {
+    return null
+  }
+  return { lat, lng }
+}
+
+// Tri « Plus proche » : la RPC nearby_listings renvoie ids et distances
+// (annonces actives géolocalisées, rayon 50 km), puis on charge ces
+// annonces en appliquant les autres filtres.
+async function getNearbyListings(
+  filters: SearchFilters,
+  geo: { lat: number; lng: number }
+): Promise<{ listings: Listing[]; count: number }> {
+  try {
+    const { createAdminClient } = await import('@/lib/supabase/server')
+    const supabase = (await createAdminClient()) as unknown as AnySupabaseClient
+
+    const page = filters.page || 1
+    const pageSize = filters.page_size || 12
+    const { data: nearby, error: rpcError } = await supabase.rpc('nearby_listings', {
+      p_lat: geo.lat,
+      p_lng: geo.lng,
+      p_radius_km: NEARBY_RADIUS_KM,
+      p_limit: pageSize,
+      p_offset: (page - 1) * pageSize,
+    })
+    if (rpcError) return { listings: [], count: 0 }
+
+    const rows = (nearby ?? []) as { id: string; distance_km: number }[]
+    if (rows.length === 0) return { listings: [], count: 0 }
+    const distanceById = new Map(rows.map((row) => [row.id, Number(row.distance_km)]))
+
+    let query = supabase
+      .from('listings')
+      .select(
+        `*, category:categories(id,name,slug,icon,color), images:listing_images(id,url,thumbnail_url,display_order), ${LISTING_SELLER_EMBED}`
+      )
+      .in('id', rows.map((row) => row.id))
+      .eq('status', 'active')
+
+    if (filters.query) {
+      query = query.textSearch('search_vector', filters.query, { type: 'websearch', config: 'french' })
+    }
+    if (filters.category_id) {
+      const { data: children } = await supabase
+        .from('categories')
+        .select('id')
+        .eq('parent_id', filters.category_id)
+      query = query.in('category_id', [
+        filters.category_id,
+        ...((children || []) as { id: string }[]).map((c) => c.id),
+      ])
+    }
+    if (filters.city) query = query.eq('city', filters.city)
+    if (filters.min_price !== undefined) query = query.gte('price', filters.min_price)
+    if (filters.max_price !== undefined) query = query.lte('price', filters.max_price)
+    if (filters.condition) query = query.eq('condition', filters.condition)
+
+    const { data, error } = await query
+    if (error) return { listings: [], count: 0 }
+
+    const listings = ((data || []) as Listing[])
+      .map((listing) => ({ ...listing, distance_km: distanceById.get(listing.id) ?? null }))
+      .sort((a, b) => (a.distance_km ?? Infinity) - (b.distance_km ?? Infinity))
+    return { listings, count: listings.length }
+  } catch {
+    return { listings: [], count: 0 }
   }
 }
 
@@ -152,7 +228,11 @@ export default async function ListingsPage({ searchParams }: PageProps) {
     page_size: 12,
   }
 
-  const { listings, count } = await getListings(filters)
+  const geo = filters.sort_by === 'nearest' ? await getGeoFromCookie() : null
+  const isNearby = filters.sort_by === 'nearest' && geo !== null
+  const { listings, count } = isNearby
+    ? await getNearbyListings(filters, geo)
+    : await getListings(filters)
 
   const hasFilters = !!(
     params.q || params.category || params.city || params.min_price || params.max_price || params.condition
@@ -179,11 +259,20 @@ export default async function ListingsPage({ searchParams }: PageProps) {
             <SortSelect currentSort={filters.sort_by || 'date_desc'} />
           </div>
 
+          {filters.sort_by === 'nearest' && !geo && (
+            <p className="mb-4 rounded-xl bg-accent/10 border border-accent/20 px-4 py-3 text-sm text-gray-700">
+              Position inconnue : choisissez de nouveau « Plus proche » et autorisez la localisation.
+              Les annonces sont affichées par date en attendant.
+            </p>
+          )}
+
           <div className="flex items-center justify-between mb-4">
             <p className="text-sm text-gray-600">
               <span className="font-semibold text-gray-900">{count.toLocaleString('fr-BF')}</span>{' '}
               annonce{count !== 1 ? 's' : ''}
-              {hasFilters && ' trouvée' + (count !== 1 ? 's' : '')}
+              {isNearby
+                ? ` à moins de ${NEARBY_RADIUS_KM} km`
+                : hasFilters && ' trouvée' + (count !== 1 ? 's' : '')}
             </p>
             {hasFilters && (
               <a href="/listings" className="text-sm text-secondary hover:underline">

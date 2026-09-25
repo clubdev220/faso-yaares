@@ -73,6 +73,10 @@ export interface Listing {
   expires_at: string | null
   created_at: string
   updated_at: string
+  latitude?: number | null
+  longitude?: number | null
+  // Rempli seulement par le tri « Plus proche » (RPC nearby_listings).
+  distance_km?: number | null
   user?: User | PublicProfile | null
   category?: Category
   images?: ListingImage[]
@@ -165,7 +169,7 @@ export interface SearchFilters {
   min_price?: number
   max_price?: number
   condition?: ListingCondition
-  sort_by?: 'date_desc' | 'date_asc' | 'price_asc' | 'price_desc'
+  sort_by?: 'date_desc' | 'date_asc' | 'price_asc' | 'price_desc' | 'nearest'
   page?: number
   page_size?: number
 }

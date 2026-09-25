@@ -105,6 +105,12 @@ export function formatMessageDateDivider(date: string | Date): string {
   })
 }
 
+export function formatDistance(km: number): string {
+  if (km < 1) return `${Math.max(100, Math.round((km * 1000) / 100) * 100)} m`
+  if (km < 10) return `${km.toFixed(1).replace('.', ',')} km`
+  return `${Math.round(km)} km`
+}
+
 export function slugify(text: string): string {
   return text
     .toLowerCase()

@@ -11,6 +11,7 @@ import { listingSchema, type ListingInput } from '@/lib/validations'
 import { BURKINA_CITIES, LISTING_CONDITIONS, MAX_IMAGES_PER_LISTING } from '@/lib/constants'
 import { cn } from '@/lib/utils'
 import type { Category, Listing } from '@/types'
+import { getListingCoordinates } from '@/lib/geo'
 
 interface ListingFormProps {
   categories: Category[]
@@ -195,6 +196,12 @@ export function ListingForm({ categories, listing }: ListingFormProps) {
 
         for (const image of images) {
           formData.append('images', image)
+        }
+
+        const coordinates = await getListingCoordinates(data.city)
+        if (coordinates) {
+          formData.append('latitude', String(coordinates.latitude))
+          formData.append('longitude', String(coordinates.longitude))
         }
 
         const res = await fetch('/api/listings', {

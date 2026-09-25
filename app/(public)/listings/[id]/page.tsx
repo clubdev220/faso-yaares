@@ -9,6 +9,7 @@ import { ListingGallery } from '@/components/listings/ListingGallery'
 import { FavoriteButton } from '@/components/common/FavoriteButton'
 import { WhatsAppButton } from '@/components/common/WhatsAppButton'
 import { CategoryIcon } from '@/components/listings/CategoryIcon'
+import { ListingMap } from '@/components/listings/ListingMap'
 import { StarRating } from '@/components/reviews/StarRating'
 import { SellerAvatar } from '@/components/sellers/SellerAvatar'
 import { VerifiedBadge } from '@/components/sellers/VerifiedBadge'
@@ -259,6 +260,14 @@ export default async function ListingDetailPage({ params }: PageProps) {
                 </p>
               </div>
             </div>
+
+            {listing.latitude != null && listing.longitude != null && (
+              <ListingMap
+                latitude={listing.latitude}
+                longitude={listing.longitude}
+                label={listing.neighborhood ? `${listing.neighborhood}, ${listing.city}` : listing.city}
+              />
+            )}
 
             {/* Report */}
             <div className="flex justify-end">
