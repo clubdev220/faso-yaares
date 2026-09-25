@@ -13,7 +13,7 @@ export default function PrivacyPage() {
     <LegalPage
       title="Confidentialité des données"
       description="Nous prenons la protection de vos données personnelles très au sérieux. Cette politique décrit quelles informations Yaaré collecte, pourquoi et comment elles sont utilisées, et quels droits vous avez sur ces données."
-      updatedAt="27 juin 2026"
+      updatedAt="24 septembre 2026"
     >
       <LegalSection number={1} title="Responsable du traitement">
         <p>
@@ -28,19 +28,22 @@ export default function PrivacyPage() {
         <p>Yaaré peut collecter les catégories de données suivantes :</p>
         <ul className="list-disc pl-5 space-y-1">
           <li>
-            <strong>Données d'identité</strong> : numéro de téléphone, prénom ou nom d'affichage,
-            photo de profil ;
+            <strong>Données d'identité</strong> : numéro de téléphone, adresse e-mail, prénom ou
+            nom d'affichage, photo de profil ;
           </li>
           <li>
             <strong>Données de localisation</strong> : ville et quartier renseignés sur le profil
-            ou dans les annonces ;
+            ou dans les annonces ; position approximative de l&apos;appareil enregistrée avec une
+            annonce lors de sa publication (à défaut, les coordonnées de la ville), et position
+            utilisée ponctuellement pour le tri « Plus proche » si vous l&apos;autorisez ;
           </li>
           <li>
             <strong>Contenus publiés</strong> : annonces, descriptions, photos, prix, catégories ;
           </li>
           <li>
             <strong>Données d'interaction</strong> : annonces mises en favoris, signalements,
-            vues d'annonces ;
+            vues d'annonces, messages échangés entre utilisateurs, offres de prix et avis
+            laissés sur les vendeurs ;
           </li>
           <li>
             <strong>Données techniques</strong> : adresse IP, type d'appareil, navigateur, horodatages.
@@ -57,7 +60,8 @@ export default function PrivacyPage() {
         <ul className="list-disc pl-5 space-y-1">
           <li>
             <strong>Exécution du service</strong> : création et gestion de votre compte,
-            authentification par code OTP, publication et affichage des annonces ;
+            authentification par code SMS, par e-mail et mot de passe ou via Google, publication
+            et affichage des annonces, messagerie entre utilisateurs ;
           </li>
           <li>
             <strong>Sécurité et modération</strong> : détection des fraudes, traitement des
@@ -91,9 +95,31 @@ export default function PrivacyPage() {
           </li>
           <li>
             <strong>Stockage d'images</strong> : solution de stockage cloud pour les photos
-            d'annonces.
+            d'annonces ;
+          </li>
+          <li>
+            <strong>Connexion avec Google</strong> : si vous choisissez ce mode de connexion,
+            Google nous transmet votre nom et votre adresse e-mail ; Yaaré ne reçoit jamais votre
+            mot de passe Google ;
+          </li>
+          <li>
+            <strong>Assistant de recherche</strong> : OpenRouter et le modèle de langage qu&apos;il
+            exécute (voir ci-dessous) ;
+          </li>
+          <li>
+            <strong>Cartes</strong> : OpenStreetMap, pour afficher l&apos;emplacement d&apos;une
+            annonce.
           </li>
         </ul>
+        <p>
+          <strong>Assistant IA.</strong> Les messages que vous écrivez à l&apos;assistant de
+          recherche sont transmis à un service d&apos;intelligence artificielle tiers (OpenRouter
+          et le modèle de langage qu&apos;il exécute) afin de générer des réponses. Ils ne sont
+          pas associés à votre identité par ce service et ne servent pas à de la publicité. Ne
+          saisissez pas d&apos;informations personnelles sensibles. Vous pouvez ne pas utiliser
+          l&apos;assistant. L&apos;historique de vos conversations avec l&apos;assistant est
+          conservé uniquement dans votre navigateur.
+        </p>
         <p>
           Ces prestataires agissent en qualité de sous-traitants et sont tenus de respecter la
           confidentialité de vos données.
@@ -177,7 +203,7 @@ export default function PrivacyPage() {
         </ul>
         <p>
           Pour exercer ces droits, contactez-nous via les moyens indiqués dans l'application ou
-          supprimez votre compte depuis vos paramètres de profil.
+          supprimez votre compte depuis votre page profil (« Supprimer mon compte »).
         </p>
       </LegalSection>
 
